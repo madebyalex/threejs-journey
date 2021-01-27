@@ -2,6 +2,20 @@ import './style.css';
 import * as THREE from 'three';
 
 /**
+ * Manage camera rotation with a mouse cursor
+ */
+
+const cursor = {
+  x: 0,
+  y: 0,
+};
+
+window.addEventListener('mousemove', (event) => {
+  cursor.x = event.clientX / sizes.width - 0.5;
+  cursor.y = event.clientY / sizes.height - 0.5;
+});
+
+/**
  * Base
  */
 // Canvas
@@ -17,9 +31,14 @@ const sizes = {
 const scene = new THREE.Scene();
 
 // Object
+// const material = new THREE.MeshLambertMaterial({
+//   color: 0x00ff00,
+// });
+
 const mesh = new THREE.Mesh(
   new THREE.BoxGeometry(1, 1, 1, 5, 5, 5),
   new THREE.MeshBasicMaterial({ color: 0xff0000 })
+  // material
 );
 scene.add(mesh);
 
@@ -39,11 +58,16 @@ const camera = new THREE.PerspectiveCamera(
 //   0.1,
 //   100
 // );
-camera.position.x = 2;
-camera.position.y = 2;
+// camera.position.x = 2;
+// camera.position.y = 2;
 camera.position.z = 2;
 camera.lookAt(mesh.position);
 scene.add(camera);
+
+// const light = new THREE.PointLight(0xffffff, 1.4, 1000);
+// light.position.set(0, 5, 15);
+
+// scene.add(light);
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({
@@ -58,9 +82,16 @@ const tick = () => {
   const elapsedTime = clock.getElapsedTime();
 
   // Update objects
-  mesh.rotation.y = elapsedTime;
+  //   mesh.rotation.y = elapsedTime;
 
   // Render
+  // camera.position.x = cursor.x * 5;
+  // camera.position.y = -cursor.y * 5;
+
+  camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3;
+  camera.position.y = cursor.y * -5;
+  camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
+  camera.lookAt(mesh.position);
   renderer.render(scene, camera);
 
   // Call tick again on the next frame
