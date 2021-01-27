@@ -1,5 +1,7 @@
 import './style.css';
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { MaxEquation } from 'three';
 
 /**
  * Manage camera rotation with a mouse cursor
@@ -31,14 +33,14 @@ const sizes = {
 const scene = new THREE.Scene();
 
 // Object
-// const material = new THREE.MeshLambertMaterial({
-//   color: 0x00ff00,
-// });
+const material = new THREE.MeshLambertMaterial({
+  color: 0x00ff00,
+});
 
 const mesh = new THREE.Mesh(
   new THREE.BoxGeometry(1, 1, 1, 5, 5, 5),
-  new THREE.MeshBasicMaterial({ color: 0xff0000 })
-  // material
+  // new THREE.MeshBasicMaterial({ color: 0xff0000 })
+  material
 );
 scene.add(mesh);
 
@@ -64,10 +66,22 @@ camera.position.z = 2;
 camera.lookAt(mesh.position);
 scene.add(camera);
 
-// const light = new THREE.PointLight(0xffffff, 1.4, 1000);
-// light.position.set(0, 5, 15);
+// Controls
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 10;
+controls.minDistance = 1.2;
+controls.maxDistance = 5;
+// controls.target.y = 0.5;
+// controls.update();
 
-// scene.add(light);
+// Lights
+const light = new THREE.PointLight(0xffffff, 1.4, 1000);
+light.position.set(0, 5, 15);
+
+scene.add(light);
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({
@@ -78,24 +92,28 @@ renderer.setSize(sizes.width, sizes.height);
 // Animate
 const clock = new THREE.Clock();
 
-const tick = () => {
+const animate = () => {
   const elapsedTime = clock.getElapsedTime();
 
   // Update objects
-  //   mesh.rotation.y = elapsedTime;
+  // mesh.rotation.y = elapsedTime;
 
   // Render
   // camera.position.x = cursor.x * 5;
   // camera.position.y = -cursor.y * 5;
 
-  camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3;
-  camera.position.y = cursor.y * -5;
-  camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
-  camera.lookAt(mesh.position);
+  // camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3;
+  // camera.position.y = cursor.y * -5;
+  // camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
+  // camera.lookAt(mesh.position);
+
+  // Update controls
+  controls.update();
+
   renderer.render(scene, camera);
 
   // Call tick again on the next frame
-  window.requestAnimationFrame(tick);
+  window.requestAnimationFrame(animate);
 };
 
-tick();
+animate();
