@@ -33,14 +33,14 @@ const sizes = {
 const scene = new THREE.Scene();
 
 // Object
-const material = new THREE.MeshLambertMaterial({
-  color: 0x00ff00,
-});
+// const material = new THREE.MeshLambertMaterial({
+//   color: 0x00ff00,
+// });
 
 const mesh = new THREE.Mesh(
   new THREE.BoxGeometry(1, 1, 1, 5, 5, 5),
-  // new THREE.MeshBasicMaterial({ color: 0xff0000 })
-  material
+  new THREE.MeshBasicMaterial({ color: 0xff0000 })
+  // material
 );
 scene.add(mesh);
 
@@ -70,18 +70,18 @@ scene.add(camera);
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
-controls.autoRotate = true;
-controls.autoRotateSpeed = 10;
+// controls.autoRotate = true;
+// controls.autoRotateSpeed = 10;
 controls.minDistance = 1.2;
 controls.maxDistance = 5;
 // controls.target.y = 0.5;
 // controls.update();
 
 // Lights
-const light = new THREE.PointLight(0xffffff, 1.4, 1000);
-light.position.set(0, 5, 15);
+// const light = new THREE.PointLight(0xffffff, 1.4, 1000);
+// light.position.set(0, 5, 15);
 
-scene.add(light);
+// scene.add(light);
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({
