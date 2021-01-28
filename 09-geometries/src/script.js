@@ -16,17 +16,34 @@ const scene = new THREE.Scene();
 
 const customGeometry = new THREE.Geometry();
 
-const vertex1 = new THREE.Vector3(0, 0, 0);
-customGeometry.vertices.push(vertex1);
+// const vertex1 = new THREE.Vector3(0, 0, 0);
+// customGeometry.vertices.push(vertex1);
 
-const vertex2 = new THREE.Vector3(0, 1, 0);
-customGeometry.vertices.push(vertex2);
+// const vertex2 = new THREE.Vector3(0, 1, 0);
+// customGeometry.vertices.push(vertex2);
 
-const vertex3 = new THREE.Vector3(1, 0, 0);
-customGeometry.vertices.push(vertex3);
+// const vertex3 = new THREE.Vector3(1, 0, 0);
+// customGeometry.vertices.push(vertex3);
 
-const face = new THREE.Face3(0, 1, 2);
-customGeometry.faces.push(face);
+// const face = new THREE.Face3(0, 1, 2);
+// customGeometry.faces.push(face);
+
+for (let i = 0; i < 50; i++) {
+  for (let j = 0; j < 3; j++) {
+    customGeometry.vertices.push(
+      new THREE.Vector3(
+        (Math.random() - 0.5) * 4,
+        (Math.random() - 0.5) * 4,
+        (Math.random() - 0.5) * 4
+      )
+    );
+  }
+
+  const verticesIndex = i * 3;
+  customGeometry.faces.push(
+    new THREE.Face3(verticesIndex, verticesIndex + 1, verticesIndex * 2)
+  );
+}
 
 const material = new THREE.MeshBasicMaterial({
   color: 0xff0000,
