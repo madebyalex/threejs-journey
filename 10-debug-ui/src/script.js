@@ -4,6 +4,19 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import gsap from 'gsap';
 import * as dat from 'dat.gui';
 
+const parameters = {
+  color: 0xffc200,
+  spin: () => {
+    console.log('Spin it!');
+    gsap.to(mesh.rotation, {
+      duration: 1,
+      y: mesh.rotation.y + Math.PI,
+      //   ease: easeInOut,
+      ease: 'elastic.out(1, 0.6)',
+    });
+  },
+};
+
 /**
  * Base
  */
@@ -17,7 +30,7 @@ const scene = new THREE.Scene();
  * Object
  */
 const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+const material = new THREE.MeshBasicMaterial({ color: parameters.color });
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
@@ -63,11 +76,20 @@ controls.enableDamping = true;
 /**
  * Debug
  */
+
 const gui = new dat.GUI();
+
 // gui.add(mesh.position, 'y', -3, 3, 0.01);
 gui.add(mesh.position, 'y').min(-3).max(3).step(0.01).name('Position Y');
 gui.add(mesh, 'visible');
-gui.add(mesh.material, 'wireframe');
+gui.add(material, 'wireframe');
+gui.addColor(parameters, 'color').onChange((e) => {
+  //   mesh.material.color = new THREE.Color(e);
+  //   console.log(new THREE.Color(e));
+  //   material.color.set(e);
+  material.color.set(parameters.color);
+});
+gui.add(parameters, 'spin');
 
 // console.log(mesh.material.wireframe);
 
