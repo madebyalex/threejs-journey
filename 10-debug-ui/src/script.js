@@ -1,6 +1,8 @@
 import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import gsap from 'gsap';
+import * as dat from 'dat.gui';
 
 /**
  * Base
@@ -14,11 +16,8 @@ const scene = new THREE.Scene();
 /**
  * Object
  */
-const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2);
-const material = new THREE.MeshBasicMaterial({
-  color: 0xff0000,
-  wireframe: true,
-});
+const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
+const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
@@ -30,44 +29,18 @@ const sizes = {
   height: window.innerHeight,
 };
 
-/**
- * Resize
- */
 window.addEventListener('resize', () => {
   // Update sizes
-  const updatedWidth = window.innerWidth;
-  const updatedHeight = window.innerHeight;
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
 
-  // Update the camera
-  camera.aspect = updatedWidth / updatedHeight;
+  // Update camera
+  camera.aspect = sizes.width / sizes.height;
   camera.updateProjectionMatrix();
 
-  // Update the renderer
-  renderer.setSize(updatedWidth, updatedHeight);
+  // Update renderer
+  renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-});
-
-/**
- * Full screen
- */
-
-window.addEventListener('dblclick', () => {
-  const fullscreenElement =
-    document.fullscreenElement || document.webkitFullscreenElement;
-
-  if (!fullscreenElement) {
-    if (canvas.requestFullscreen) {
-      canvas.requestFullscreen();
-    } else if (canvas.webkitRequestFullscreen) {
-      canvas.webkitRequestFullscreen();
-    }
-  } else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    }
-  }
 });
 
 /**
@@ -85,10 +58,18 @@ scene.add(camera);
 
 // Controls
 const controls = new OrbitControls(camera, canvas);
-// controls.enabled = false;
-controls.maxDistance = 10;
-controls.minDistance = 1.2;
 controls.enableDamping = true;
+
+/**
+ * Debug
+ */
+const gui = new dat.GUI();
+// gui.add(mesh.position, 'y', -3, 3, 0.01);
+gui.add(mesh.position, 'y').min(-3).max(3).step(0.01).name('Position Y');
+gui.add(mesh, 'visible');
+gui.add(mesh.material, 'wireframe');
+
+// console.log(mesh.material.wireframe);
 
 /**
  * Renderer

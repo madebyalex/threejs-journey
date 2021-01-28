@@ -17,7 +17,7 @@ const geometry = new THREE.BoxBufferGeometry(1, 1, 1, 2, 2, 2);
 // Custom multiple buffer geometries
 const multiBufferGeometry = new THREE.BufferGeometry();
 
-const count = 500;
+const count = 5000;
 
 const positionsArray = new Float32Array(count * 3 * 3);
 
