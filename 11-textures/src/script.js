@@ -16,19 +16,43 @@ image.onload = () => {
 image.src = './textures/door/color.jpg';
 
 // Using Texture Loader
-const textureLoader = new THREE.TextureLoader();
-const texture2 = textureLoader.load(
-  './textures/door/color.jpg',
-  () => {
-    console.log('load');
-  },
-  () => {
-    console.log('progress');
-  },
-  () => {
-    console.log('error');
-  }
+const loadingManager = new THREE.LoadingManager();
+
+loadingManager.onStart = () => {
+  console.log('onStart');
+};
+
+loadingManager.onLoaded = () => {
+  console.log('onLoaded');
+};
+
+loadingManager.onProgress = () => {
+  console.log('onProgress');
+};
+
+loadingManager.onError = () => {
+  console.log('onError');
+};
+
+const textureLoader = new THREE.TextureLoader(loadingManager);
+const colorTexture = textureLoader.load('./textures/door/color.jpg');
+const alphaTexture = textureLoader.load('./textures/door/alpha.jpg');
+const heightTexture = textureLoader.load('./textures/door/height.jpg');
+const normalTexture = textureLoader.load('./textures/door/normal.jpg');
+const ambientOcclusionTexture = textureLoader.load(
+  './textures/door/ambientOcclusion.jpg'
 );
+const metalnessTexture = textureLoader.load('./textures/door/metalness.jpg');
+const roughnessTexture = textureLoader.load('./textures/door/roughness.jpg');
+
+colorTexture.repeat.x = 2;
+colorTexture.repeat.y = 3;
+
+colorTexture.wrapS = THREE.RepeatWrapping;
+colorTexture.wrapT = THREE.RepeatWrapping;
+
+// colorTexture.wrapS = THREE.MirroredRepeatWrapping;
+// colorTexture.wrapT = THREE.MirroredRepeatWrapping;
 
 /**
  * Base
@@ -43,7 +67,8 @@ const scene = new THREE.Scene();
  * Object
  */
 const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({ map: texture2 });
+const material = new THREE.MeshBasicMaterial({ map: colorTexture });
+// console.log(geometry.attributes.uv);
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
