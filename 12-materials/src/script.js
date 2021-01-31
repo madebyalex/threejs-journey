@@ -6,19 +6,19 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
  * Textures
  */
 
-const imageLoader = new THREE.ImageLoader();
-const doorColorTexture = imageLoader.load('/textures/door/color.jpg');
-const doorAlphaTexture = imageLoader.load('/textures/door/alpha.jpg');
-const doorAmbientOcclusionTexture = imageLoader.load(
+const textureLoader = new THREE.TextureLoader();
+const doorColorTexture = textureLoader.load('/textures/door/color.jpg');
+const doorAlphaTexture = textureLoader.load('/textures/door/alpha.jpg');
+const doorAmbientOcclusionTexture = textureLoader.load(
   '/textures/door/ambientOcclusion.jpg'
 );
-const doorHeightTexture = imageLoader.load('/textures/door/height.jpg');
-const doorMetalnessTexture = imageLoader.load('/textures/door/metalness.jpg');
-const doorNormalTexture = imageLoader.load('/textures/door/normal.jpg');
-const doorRoughnessTexture = imageLoader.load('/textures/door/roughness.jpg');
+const doorHeightTexture = textureLoader.load('/textures/door/height.jpg');
+const doorMetalnessTexture = textureLoader.load('/textures/door/metalness.jpg');
+const doorNormalTexture = textureLoader.load('/textures/door/normal.jpg');
+const doorRoughnessTexture = textureLoader.load('/textures/door/roughness.jpg');
 
-const gradientTexture = imageLoader.load('/textures/gradients/3.jpg');
-const matcapTexture = imageLoader.load('/textures/matcaps/1.png');
+const gradientTexture = textureLoader.load('/textures/gradients/3.jpg');
+const matcapTexture = textureLoader.load('/textures/matcaps/1.png');
 
 /**
  * Base
@@ -33,11 +33,10 @@ const scene = new THREE.Scene();
  * Objects
  */
 
-const material = new THREE.MeshBasicMaterial({
-  // color: 0x00ff00,
-  // side: THREE.DoubleSide,
-  // map: doorColorTexture,
-});
+const material = new THREE.MeshBasicMaterial();
+
+material.map = doorColorTexture;
+
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material);
 const plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
 const torus = new THREE.Mesh(new THREE.TorusGeometry(1, 0.3, 16, 32), material);
