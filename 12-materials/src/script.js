@@ -1,6 +1,7 @@
 import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { DoubleSide } from 'three';
 
 /**
  * Textures
@@ -33,9 +34,28 @@ const scene = new THREE.Scene();
  * Objects
  */
 
-const material = new THREE.MeshBasicMaterial();
+const material = new THREE.MeshBasicMaterial({ side: DoubleSide });
+
+// material.color.set('#ff00ff');
+// material.color = new THREE.Color('salmon');
+// material.color = new THREE.Color(0xff00ff);
+
+// material.wireframe = true;
+
+// To have objects semitransparent it's required to set the transparent property to true
+// material.opacity = 0.5;
+// material.transparent = true;
 
 material.map = doorColorTexture;
+
+material.alphaMap = doorAlphaTexture;
+material.transparent = true;
+// doorColorTexture.repeat.x = 2;
+// doorColorTexture.repeat.y = 2;
+// doorColorTexture.wrapS = THREE.RepeatWrapping;
+// doorColorTexture.wrapT = THREE.RepeatWrapping;
+
+// material.side = THREE.DoubleSide
 
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material);
 const plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -80,7 +100,7 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.x = 1;
 camera.position.y = 1;
-camera.position.z = 2;
+camera.position.z = 4;
 scene.add(camera);
 
 // Controls
