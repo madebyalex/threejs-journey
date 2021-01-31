@@ -2,6 +2,17 @@ import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { DoubleSide } from 'three';
+import * as dat from 'dat.gui';
+
+/**
+ * Debug
+ */
+
+const gui = new dat.GUI({ width: 400 });
+const parameters = {
+  ambientLightColor: 0x0000ff,
+  pointLightColor: 0xffffff,
+};
 
 /**
  * Textures
@@ -63,11 +74,20 @@ const scene = new THREE.Scene();
 // material.shininess = 200;
 // material.specular = new THREE.Color(0x1188ff);
 
-const material = new THREE.MeshToonMaterial();
-material.gradientMap = gradientTexture;
-gradientTexture.generateMipmaps = false;
-gradientTexture.minFilter = THREE.NearestFilter;
-gradientTexture.magFilter = THREE.NearestFilter;
+// const material = new THREE.MeshToonMaterial();
+// material.gradientMap = gradientTexture;
+// gradientTexture.generateMipmaps = false;
+// gradientTexture.minFilter = THREE.NearestFilter;
+// gradientTexture.magFilter = THREE.NearestFilter;
+
+const material = new THREE.MeshStandardMaterial();
+material.metalness = 0.45;
+material.roughness = 0.65;
+
+gui.add(material, 'metalness').min(0).max(1).step(0.0001).name('Metalness');
+gui.add(material, 'roughness').min(0).max(1).step(0.0001).name('Roughness');
+
+// material.roughnessMap = doorRoughnessTexture;
 
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24), material);
 const plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -82,10 +102,26 @@ scene.add(sphere, plane, torus);
  * Lights
  */
 
-const ambientLight = new THREE.AmbientLight(0x0000ff, 0.5);
+const ambientLight = new THREE.AmbientLight(parameters.ambientLightColor, 0.5);
+
+gui
+  .addColor(parameters, 'ambientLightColor')
+  .onChange(() => {
+    ambientLight.color.set(parameters.ambientLightColor);
+  })
+  .name('Ambient light color');
+
 scene.add(ambientLight);
 
-const pointLight = new THREE.PointLight(0xffffff, 0.6);
+const pointLight = new THREE.PointLight(parameters.pointLightColor, 0.6);
+
+gui
+  .addColor(parameters, 'pointLightColor')
+  .onChange(() => {
+    pointLight.color.set(parameters.pointLightColor);
+  })
+  .name('Point light color');
+
 pointLight.position.x = 2;
 pointLight.position.y = 3;
 pointLight.position.z = 4;
@@ -131,6 +167,7 @@ scene.add(camera);
 // Controls
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
+controls.autoRotate = true;
 
 /**
  * Renderer
