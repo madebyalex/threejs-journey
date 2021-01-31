@@ -19,7 +19,7 @@ const doorNormalTexture = textureLoader.load('/textures/door/normal.jpg');
 const doorRoughnessTexture = textureLoader.load('/textures/door/roughness.jpg');
 
 const gradientTexture = textureLoader.load('/textures/gradients/3.jpg');
-const matcapTexture = textureLoader.load('/textures/matcaps/1.png');
+const matcapTexture = textureLoader.load('/textures/matcaps/8.png');
 
 /**
  * Base
@@ -34,28 +34,26 @@ const scene = new THREE.Scene();
  * Objects
  */
 
-const material = new THREE.MeshBasicMaterial({ side: DoubleSide });
-
+// const material = new THREE.MeshBasicMaterial();
 // material.color.set('#ff00ff');
 // material.color = new THREE.Color('salmon');
 // material.color = new THREE.Color(0xff00ff);
-
 // material.wireframe = true;
 
 // To have objects semitransparent it's required to set the transparent property to true
 // material.opacity = 0.5;
 // material.transparent = true;
-
-material.map = doorColorTexture;
-
-material.alphaMap = doorAlphaTexture;
-material.transparent = true;
-// doorColorTexture.repeat.x = 2;
-// doorColorTexture.repeat.y = 2;
-// doorColorTexture.wrapS = THREE.RepeatWrapping;
-// doorColorTexture.wrapT = THREE.RepeatWrapping;
-
+// material.map = doorColorTexture;
+// material.alphaMap = doorAlphaTexture;
+// material.transparent = true;
 // material.side = THREE.DoubleSide
+
+// const material = new THREE.MeshNormalMaterial();
+// material.wireframe = true;
+// material.flatShading = true;
+
+const material = new THREE.MeshMatcapMaterial();
+material.matcap = matcapTexture;
 
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material);
 const plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
