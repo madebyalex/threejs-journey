@@ -87,11 +87,23 @@ const scene = new THREE.Scene();
 
 const material = new THREE.MeshStandardMaterial();
 material.side = THREE.DoubleSide;
-material.metalness = 0.45;
-material.roughness = 0.65;
+// material.metalness = 0.45;
+// material.roughness = 0.65;
+material.metalness = 0;
+material.roughness = 1;
 material.map = doorColorTexture;
+
 material.aoMap = doorAmbientOcclusionTexture;
 material.aoMapIntensity = 1;
+
+material.displacementMap = doorHeightTexture;
+material.displacementScale = 0.15;
+material.metalnessMap = doorMetalnessTexture;
+material.roughnessMap = doorRoughnessTexture;
+material.normalMap = doorNormalTexture;
+material.normalScale.set(0.5, 0.5);
+material.transparent = true;
+material.alphaMap = doorAlphaTexture;
 
 gui.add(material, 'metalness').min(0).max(1).step(0.0001).name('Metalness');
 gui.add(material, 'roughness').min(0).max(1).step(0.0001).name('Roughness');
@@ -102,11 +114,18 @@ gui
   .step(0.05)
   .name('AO map intensity');
 
-// material.roughnessMap = doorRoughnessTexture;
+gui
+  .add(material, 'displacementScale')
+  .min(0)
+  .max(10)
+  .name('Displacement scale');
 
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24), material);
-const plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
-const torus = new THREE.Mesh(new THREE.TorusGeometry(1, 0.3, 24, 32), material);
+const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 64, 64), material);
+const plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2, 100, 100), material);
+const torus = new THREE.Mesh(
+  new THREE.TorusGeometry(1, 0.3, 64, 128),
+  material
+);
 
 sphere.geometry.setAttribute(
   'uv2',
@@ -197,7 +216,7 @@ scene.add(camera);
 // Controls
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
-controls.autoRotate = true;
+// controls.autoRotate = true;
 
 /**
  * Renderer
