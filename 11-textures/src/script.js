@@ -1,6 +1,7 @@
 import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { LinearFilter } from 'three';
 
 /**
  * Textures
@@ -35,7 +36,12 @@ const loadingManager = new THREE.LoadingManager();
 // };
 
 const textureLoader = new THREE.TextureLoader(loadingManager);
-const colorTexture = textureLoader.load('./textures/door/color.jpg');
+// const colorTexture = textureLoader.load('./textures/door/color.jpg');
+// const colorTexture = textureLoader.load(
+//   './textures/checkerboard-1024x1024.png'
+// );
+// const colorTexture = textureLoader.load('./textures/checkerboard-8x8.png');
+const colorTexture = textureLoader.load('./textures/minecraft.png');
 const alphaTexture = textureLoader.load('./textures/door/alpha.jpg');
 const heightTexture = textureLoader.load('./textures/door/height.jpg');
 const normalTexture = textureLoader.load('./textures/door/normal.jpg');
@@ -57,9 +63,19 @@ const roughnessTexture = textureLoader.load('./textures/door/roughness.jpg');
 // colorTexture.offset.x = 0.5;
 // colorTexture.offset.y = 0.5;
 
-colorTexture.rotation = Math.PI * 0.25;
-colorTexture.center.x = 0.5;
-colorTexture.center.y = 0.5;
+// colorTexture.rotation = Math.PI * 0.25;
+// colorTexture.center.x = 0.5;
+// colorTexture.center.y = 0.5;
+
+// Mipmapping
+// It's recommended to deactivate mipmapping when using filters for better performance
+colorTexture.generateMipmaps = false;
+
+// Minification filter
+colorTexture.minFilter = THREE.NearestFilter;
+
+// Magnification filter
+colorTexture.magFilter = THREE.NearestFilter;
 
 /**
  * Base
