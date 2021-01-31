@@ -18,7 +18,7 @@ const doorMetalnessTexture = textureLoader.load('/textures/door/metalness.jpg');
 const doorNormalTexture = textureLoader.load('/textures/door/normal.jpg');
 const doorRoughnessTexture = textureLoader.load('/textures/door/roughness.jpg');
 
-const gradientTexture = textureLoader.load('/textures/gradients/3.jpg');
+const gradientTexture = textureLoader.load('/textures/gradients/5.jpg');
 const matcapTexture = textureLoader.load('/textures/matcaps/8.png');
 
 /**
@@ -52,10 +52,24 @@ const scene = new THREE.Scene();
 // material.wireframe = true;
 // material.flatShading = true;
 
-const material = new THREE.MeshMatcapMaterial();
-material.matcap = matcapTexture;
+// const material = new THREE.MeshMatcapMaterial();
+// material.matcap = matcapTexture;
 
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), material);
+// const material = new THREE.MeshDepthMaterial();
+
+// const material = new THREE.MeshLambertMaterial();
+
+// const material = new THREE.MeshPhongMaterial();
+// material.shininess = 200;
+// material.specular = new THREE.Color(0x1188ff);
+
+const material = new THREE.MeshToonMaterial();
+material.gradientMap = gradientTexture;
+gradientTexture.generateMipmaps = false;
+gradientTexture.minFilter = THREE.NearestFilter;
+gradientTexture.magFilter = THREE.NearestFilter;
+
+const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24), material);
 const plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
 const torus = new THREE.Mesh(new THREE.TorusGeometry(1, 0.3, 16, 32), material);
 
@@ -63,6 +77,19 @@ sphere.position.x = -2;
 torus.position.x = 3;
 
 scene.add(sphere, plane, torus);
+
+/**
+ * Lights
+ */
+
+const ambientLight = new THREE.AmbientLight(0x0000ff, 0.5);
+scene.add(ambientLight);
+
+const pointLight = new THREE.PointLight(0xffffff, 0.6);
+pointLight.position.x = 2;
+pointLight.position.y = 3;
+pointLight.position.z = 4;
+scene.add(pointLight);
 
 /**
  * Sizes
