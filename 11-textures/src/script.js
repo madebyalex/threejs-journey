@@ -18,21 +18,21 @@ image.src = './textures/door/color.jpg';
 // Using Texture Loader
 const loadingManager = new THREE.LoadingManager();
 
-loadingManager.onStart = () => {
-  console.log('onStart');
-};
+// loadingManager.onStart = () => {
+//   console.log('onStart');
+// };
 
-loadingManager.onLoaded = () => {
-  console.log('onLoaded');
-};
+// loadingManager.onLoaded = () => {
+//   console.log('onLoaded');
+// };
 
-loadingManager.onProgress = () => {
-  console.log('onProgress');
-};
+// loadingManager.onProgress = () => {
+//   console.log('onProgress');
+// };
 
-loadingManager.onError = () => {
-  console.log('onError');
-};
+// loadingManager.onError = () => {
+//   console.log('onError');
+// };
 
 const textureLoader = new THREE.TextureLoader(loadingManager);
 const colorTexture = textureLoader.load('./textures/door/color.jpg');
@@ -45,14 +45,21 @@ const ambientOcclusionTexture = textureLoader.load(
 const metalnessTexture = textureLoader.load('./textures/door/metalness.jpg');
 const roughnessTexture = textureLoader.load('./textures/door/roughness.jpg');
 
-colorTexture.repeat.x = 2;
-colorTexture.repeat.y = 3;
+// colorTexture.repeat.x = 2;
+// colorTexture.repeat.y = 3;
 
-colorTexture.wrapS = THREE.RepeatWrapping;
-colorTexture.wrapT = THREE.RepeatWrapping;
+// colorTexture.wrapS = THREE.RepeatWrapping;
+// colorTexture.wrapT = THREE.RepeatWrapping;
 
 // colorTexture.wrapS = THREE.MirroredRepeatWrapping;
 // colorTexture.wrapT = THREE.MirroredRepeatWrapping;
+
+// colorTexture.offset.x = 0.5;
+// colorTexture.offset.y = 0.5;
+
+colorTexture.rotation = Math.PI * 0.25;
+colorTexture.center.x = 0.5;
+colorTexture.center.y = 0.5;
 
 /**
  * Base
