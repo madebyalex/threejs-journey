@@ -9,8 +9,13 @@ import * as dat from 'dat.gui';
  */
 
 const gui = new dat.GUI({ width: 400 });
+// const parameters = {
+//   ambientLightColor: 0x0000ff,
+//   pointLightColor: 0xffffff,
+// };
+
 const parameters = {
-  ambientLightColor: 0x0000ff,
+  ambientLightColor: 0xffffff,
   pointLightColor: 0xffffff,
 };
 
@@ -81,17 +86,42 @@ const scene = new THREE.Scene();
 // gradientTexture.magFilter = THREE.NearestFilter;
 
 const material = new THREE.MeshStandardMaterial();
+material.side = THREE.DoubleSide;
 material.metalness = 0.45;
 material.roughness = 0.65;
+material.map = doorColorTexture;
+material.aoMap = doorAmbientOcclusionTexture;
+material.aoMapIntensity = 1;
 
 gui.add(material, 'metalness').min(0).max(1).step(0.0001).name('Metalness');
 gui.add(material, 'roughness').min(0).max(1).step(0.0001).name('Roughness');
+gui
+  .add(material, 'aoMapIntensity')
+  .min(0)
+  .max(10)
+  .step(0.05)
+  .name('AO map intensity');
 
 // material.roughnessMap = doorRoughnessTexture;
 
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 24), material);
 const plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
-const torus = new THREE.Mesh(new THREE.TorusGeometry(1, 0.3, 16, 32), material);
+const torus = new THREE.Mesh(new THREE.TorusGeometry(1, 0.3, 24, 32), material);
+
+sphere.geometry.setAttribute(
+  'uv2',
+  new THREE.BufferAttribute(sphere.geometry.attributes.uv.array, 2)
+);
+
+plane.geometry.setAttribute(
+  'uv2',
+  new THREE.BufferAttribute(plane.geometry.attributes.uv.array, 2)
+);
+
+torus.geometry.setAttribute(
+  'uv2',
+  new THREE.BufferAttribute(torus.geometry.attributes.uv.array, 2)
+);
 
 sphere.position.x = -2;
 torus.position.x = 3;
