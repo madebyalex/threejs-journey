@@ -15,7 +15,7 @@ const gui = new dat.GUI({ width: 400 });
 // };
 
 const parameters = {
-  ambientLightColor: 0xffffff,
+  ambientLightColor: 0xa7c0ff,
   pointLightColor: 0xffffff,
 };
 
@@ -24,6 +24,8 @@ const parameters = {
  */
 
 const textureLoader = new THREE.TextureLoader();
+const cubeTextureLoader = new THREE.CubeTextureLoader();
+
 const doorColorTexture = textureLoader.load('/textures/door/color.jpg');
 const doorAlphaTexture = textureLoader.load('/textures/door/alpha.jpg');
 const doorAmbientOcclusionTexture = textureLoader.load(
@@ -36,6 +38,24 @@ const doorRoughnessTexture = textureLoader.load('/textures/door/roughness.jpg');
 
 const gradientTexture = textureLoader.load('/textures/gradients/5.jpg');
 const matcapTexture = textureLoader.load('/textures/matcaps/8.png');
+
+// const environmentMapTexture = cubeTextureLoader.load([
+//   '/textures/environmentMaps/2/px.jpg',
+//   '/textures/environmentMaps/2/nx.jpg',
+//   '/textures/environmentMaps/2/py.jpg',
+//   '/textures/environmentMaps/2/ny.jpg',
+//   '/textures/environmentMaps/2/pz.jpg',
+//   '/textures/environmentMaps/2/nz.jpg',
+// ]);
+
+const environmentMapTexture = cubeTextureLoader.load([
+  '/textures/environmentMaps/4/px.png',
+  '/textures/environmentMaps/4/nx.png',
+  '/textures/environmentMaps/4/py.png',
+  '/textures/environmentMaps/4/ny.png',
+  '/textures/environmentMaps/4/pz.png',
+  '/textures/environmentMaps/4/nz.png',
+]);
 
 /**
  * Base
@@ -85,25 +105,29 @@ const scene = new THREE.Scene();
 // gradientTexture.minFilter = THREE.NearestFilter;
 // gradientTexture.magFilter = THREE.NearestFilter;
 
+// const material = new THREE.MeshStandardMaterial();
+// material.side = THREE.DoubleSide;
+// material.metalness = 0;
+// material.roughness = 1;
+// material.map = doorColorTexture;
+
+// material.aoMap = doorAmbientOcclusionTexture;
+// material.aoMapIntensity = 1;
+
+// material.displacementMap = doorHeightTexture;
+// material.displacementScale = 0.15;
+// material.metalnessMap = doorMetalnessTexture;
+// material.roughnessMap = doorRoughnessTexture;
+// material.normalMap = doorNormalTexture;
+// material.normalScale.set(0.5, 0.5);
+// material.transparent = true;
+// material.alphaMap = doorAlphaTexture;
+
 const material = new THREE.MeshStandardMaterial();
-material.side = THREE.DoubleSide;
-// material.metalness = 0.45;
-// material.roughness = 0.65;
-material.metalness = 0;
-material.roughness = 1;
-material.map = doorColorTexture;
-
-material.aoMap = doorAmbientOcclusionTexture;
-material.aoMapIntensity = 1;
-
-material.displacementMap = doorHeightTexture;
-material.displacementScale = 0.15;
-material.metalnessMap = doorMetalnessTexture;
-material.roughnessMap = doorRoughnessTexture;
-material.normalMap = doorNormalTexture;
-material.normalScale.set(0.5, 0.5);
-material.transparent = true;
-material.alphaMap = doorAlphaTexture;
+material.side = DoubleSide;
+material.metalness = 0.7;
+material.roughness = 0.12;
+material.envMap = environmentMapTexture;
 
 gui.add(material, 'metalness').min(0).max(1).step(0.0001).name('Metalness');
 gui.add(material, 'roughness').min(0).max(1).step(0.0001).name('Roughness');
@@ -117,7 +141,7 @@ gui
 gui
   .add(material, 'displacementScale')
   .min(0)
-  .max(10)
+  .max(1.2)
   .name('Displacement scale');
 
 const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 64, 64), material);
@@ -216,7 +240,7 @@ scene.add(camera);
 // Controls
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
-// controls.autoRotate = true;
+controls.autoRotate = true;
 
 /**
  * Renderer
@@ -226,6 +250,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+console.log(renderer.info.render);
 
 /**
  * Animate
