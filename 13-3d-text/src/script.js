@@ -17,15 +17,15 @@ const canvas = document.querySelector('canvas.webgl');
 const scene = new THREE.Scene();
 
 // Axes helper
-const axesHelper = new THREE.AxesHelper();
-scene.add(axesHelper);
+// const axesHelper = new THREE.AxesHelper();
+// scene.add(axesHelper);
 
 /**
  * Textures
  */
 const textureLoader = new THREE.TextureLoader();
 const matcapTexture = textureLoader.load('textures/matcaps/1.png');
-console.log(matcapTexture);
+// console.log(matcapTexture);
 
 /**
  * Fonts
@@ -48,31 +48,85 @@ fontLoader.load('/fonts/Fira_Sans_ExtraBold_Regular.json', (font) => {
   textGeometry.computeBoundingBox();
   //   console.log(textGeometry.boundingBox.max.x / 2);
 
-  //   const textMaterial = new THREE.MeshNormalMaterial();
-  const textMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
+  const textMaterial = new THREE.MeshNormalMaterial();
+  //   const textMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
   const text = new THREE.Mesh(textGeometry, textMaterial);
-
-  //   text.position.x =
-  //     -(textGeometry.boundingBox.max.x + textGeometry.boundingBox.min.x) / 2;
-  //   text.position.y =
-  //     -(textGeometry.boundingBox.max.y + textGeometry.boundingBox.min.y) / 2;
-  //   text.position.z =
-  //     -(textGeometry.boundingBox.max.z + textGeometry.boundingBox.min.z) / 2;
 
   //   textGeometry.translate(
   //     -(textGeometry.boundingBox.max.x + textGeometry.boundingBox.min.x) / 2,
-
   //     -(textGeometry.boundingBox.max.y + textGeometry.boundingBox.min.y) / 2,
-
   //     -(textGeometry.boundingBox.max.z + textGeometry.boundingBox.min.z) / 2
   //   );
-
   //   textGeometry.computeBoundingBox();
   //   console.log(textGeometry.boundingBox);
 
   textGeometry.center();
-
   scene.add(text);
+
+  console.time('donuts');
+
+  const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45);
+  const donutMaterial = new THREE.MeshMatcapMaterial({
+    matcap: matcapTexture,
+  });
+
+  for (let i = 0; i < 500; i++) {
+    const donut = new THREE.Mesh(donutGeometry, donutMaterial);
+
+    // No-Intersections – Attempt #1
+
+    // donut.position.x =
+    //   (Math.random() - 0.5) * 10 +
+    //   textGeometry.boundingBox.max.x * Math.random(-1, 1);
+    // donut.position.y =
+    //   (Math.random() - 0.5) * 10 +
+    //   textGeometry.boundingBox.max.y * Math.random(-1, 1);
+    // donut.position.z =
+    //   (Math.random() - 0.5) * 10 +
+    //   textGeometry.boundingBox.max.z * Math.random(-1, 1);
+
+    // No-Intersections – Attempt #2
+    // var plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+
+    // donut.position.x =
+    //   Math.random() * 10 * plusOrMinus +
+    //   textGeometry.boundingBox.max.x * plusOrMinus;
+    // donut.position.y =
+    //   Math.random() * 10 * plusOrMinus +
+    //   textGeometry.boundingBox.max.y * plusOrMinus;
+    // donut.position.z =
+    //   Math.random() * 10 * plusOrMinus +
+    //   textGeometry.boundingBox.max.z * plusOrMinus;
+
+    // No-Intersections – Attempt #3
+    const plusOrMinusX = Math.random() < 0.5 ? -1 : 1;
+    const plusOrMinusY = Math.random() < 0.5 ? -1 : 1;
+    const plusOrMinusZ = Math.random() < 0.5 ? -1 : 1;
+
+    donut.position.x =
+      Math.random() * 8 * plusOrMinusX +
+      (textGeometry.boundingBox.max.x * plusOrMinusX) / 4;
+    donut.position.y =
+      Math.random() * 8 * plusOrMinusY +
+      (textGeometry.boundingBox.max.y * plusOrMinusY) / 1.5;
+    donut.position.z =
+      Math.random() * 8 * plusOrMinusZ +
+      (textGeometry.boundingBox.max.z * plusOrMinusZ) / 1.5;
+
+    // donut.position.x = (Math.random() - 0.5) * 10;
+    // donut.position.y = (Math.random() - 0.5) * 10;
+    // donut.position.z = (Math.random() - 0.5) * 10;
+
+    donut.rotation.x = Math.random() * Math.PI;
+    donut.rotation.y = Math.random() * Math.PI;
+
+    const scale = (Math.random() + 0.5) * 0.5;
+    donut.scale.set(scale, scale, scale);
+
+    scene.add(donut);
+  }
+
+  console.timeEnd('donuts');
 });
 
 /**
