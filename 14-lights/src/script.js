@@ -18,13 +18,20 @@ const scene = new THREE.Scene();
 /**
  * Lights
  */
-const ambientLight = new THREE.AmbientLight(0xff00ff, 0.5);
+
+// Ambient light
+const ambientLight = new THREE.AmbientLight(0xff00ff, 0.6);
 // const ambientLight = new THREE.AmbientLight();
 // ambientLight.color = new THREE.Color(0xff00ff);
 // ambientLight.intensity = 0.5;
 scene.add(ambientLight);
 
 gui.add(ambientLight, 'intensity').min(0).max(1).step(0.05);
+
+// Directional light
+const directionalLight = new THREE.DirectionalLight(0xffff00, 0.55);
+directionalLight.position.set(1, 0.25, 0);
+scene.add(directionalLight);
 
 /**
  * Objects
