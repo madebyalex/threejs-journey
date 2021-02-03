@@ -1,0 +1,10 @@
+/*  add styles for the canvas to fill */
+
+html,
+body,
+canvas {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}

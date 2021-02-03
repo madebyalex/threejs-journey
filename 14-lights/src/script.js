@@ -7,7 +7,7 @@ import * as dat from 'dat.gui';
  * Base
  */
 // Debug
-const gui = new dat.GUI();
+const gui = new dat.GUI({ width: 400 });
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl');
@@ -24,23 +24,40 @@ const ambientLight = new THREE.AmbientLight(0xff00ff, 0.4);
 // const ambientLight = new THREE.AmbientLight();
 // ambientLight.color = new THREE.Color(0xff00ff);
 // ambientLight.intensity = 0.5;
-scene.add(ambientLight);
+// scene.add(ambientLight);
 
-gui.add(ambientLight, 'intensity').min(0).max(1).step(0.05);
+gui
+  .add(ambientLight, 'intensity')
+  .min(0)
+  .max(1)
+  .step(0.05)
+  .name('Ambient light: Intensity');
 
 // Directional light
 const directionalLight = new THREE.DirectionalLight(0xffff00, 0.55);
 directionalLight.position.set(1, 0.25, 0);
-scene.add(directionalLight);
+// scene.add(directionalLight);
 
 // Hemisphere
 const hemisphereLight = new THREE.HemisphereLight(0xffff00, 0x0000ff, 0.3);
-scene.add(hemisphereLight);
+// scene.add(hemisphereLight);
 
 // Point light
 const pointLight = new THREE.PointLight(0xff9000, 0.5, 3);
 pointLight.position.set(0, 0.3, 0.8);
-scene.add(pointLight);
+// scene.add(pointLight);
+
+// Rect area light
+const rectAreaLight = new THREE.RectAreaLight(0x4e00ff, 2, 3, 1);
+// rectAreaLight.position.set(0, 1, 0);
+scene.add(rectAreaLight);
+
+gui
+  .add(rectAreaLight, 'intensity')
+  .min(0)
+  .max(20)
+  .step(0.05)
+  .name('Rect area light: Intensity');
 
 /**
  * Objects
@@ -62,7 +79,7 @@ const cube = new THREE.Mesh(
 );
 
 const torus = new THREE.Mesh(
-  new THREE.TorusBufferGeometry(0.3, 0.2, 32, 64),
+  new THREE.TorusBufferGeometry(0.3, 0.15, 32, 64),
   material
 );
 torus.position.x = 1.5;
