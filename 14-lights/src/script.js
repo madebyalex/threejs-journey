@@ -20,7 +20,7 @@ const scene = new THREE.Scene();
  */
 
 // Ambient light
-const ambientLight = new THREE.AmbientLight(0xff00ff, 0.6);
+const ambientLight = new THREE.AmbientLight(0xff00ff, 0.4);
 // const ambientLight = new THREE.AmbientLight();
 // ambientLight.color = new THREE.Color(0xff00ff);
 // ambientLight.intensity = 0.5;
@@ -32,6 +32,10 @@ gui.add(ambientLight, 'intensity').min(0).max(1).step(0.05);
 const directionalLight = new THREE.DirectionalLight(0xffff00, 0.55);
 directionalLight.position.set(1, 0.25, 0);
 scene.add(directionalLight);
+
+// Hemisphere
+const hemisphereLight = new THREE.HemisphereLight(0xffff00, 0x0000ff, 0.3);
+scene.add(hemisphereLight);
 
 /**
  * Objects
