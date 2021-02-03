@@ -50,6 +50,8 @@ pointLight.position.set(0, 0.3, 0.8);
 // Rect area light
 const rectAreaLight = new THREE.RectAreaLight(0x4e00ff, 2, 3, 1);
 // rectAreaLight.position.set(0, 1, 0);
+rectAreaLight.position.set(1, -0.5, 1);
+rectAreaLight.lookAt(new THREE.Vector3());
 scene.add(rectAreaLight);
 
 gui
