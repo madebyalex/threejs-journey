@@ -54,6 +54,20 @@ rectAreaLight.position.set(1, -0.5, 1);
 rectAreaLight.lookAt(new THREE.Vector3());
 scene.add(rectAreaLight);
 
+const spotLight = new THREE.SpotLight(
+  0xff00ff,
+  0.6,
+  10,
+  Math.PI * 0.01,
+  0.2,
+  1
+);
+spotLight.position.set(0, 2, 3);
+scene.add(spotLight);
+
+spotLight.target.position.x = -1.5;
+scene.add(spotLight.target);
+
 gui
   .add(rectAreaLight, 'intensity')
   .min(0)
