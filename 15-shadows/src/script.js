@@ -5,6 +5,14 @@ import * as dat from 'dat.gui';
 import { DirectionalLightHelper, PCFSoftShadowMap } from 'three';
 
 /**
+ * Textures
+ */
+
+const textureLoader = new THREE.TextureLoader();
+const bakedShadow = textureLoader.load('/textures/bakedShadow.jpg');
+console.log(bakedShadow);
+
+/**
  * Base
  */
 // Debug
@@ -99,7 +107,12 @@ const sphere = new THREE.Mesh(
   material
 );
 
-const plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(5, 5), material);
+const plane = new THREE.Mesh(
+  new THREE.PlaneBufferGeometry(5, 5),
+  new THREE.MeshBasicMaterial({
+    map: bakedShadow,
+  })
+);
 plane.rotation.x = -Math.PI * 0.5;
 plane.position.y = -0.5;
 
@@ -158,7 +171,8 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.shadowMap.enabled = true;
+// renderer.shadowMap.enabled = true;
+renderer.shadowMap.enabled = false;
 renderer.shadowMap.type = PCFSoftShadowMap;
 
 /**
