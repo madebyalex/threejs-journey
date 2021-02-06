@@ -196,6 +196,8 @@ const tick = () => {
   sphere.position.x = Math.cos(elapsedTime) * 1.3;
   sphere.position.z = Math.sin(elapsedTime) * 1.3;
   sphere.position.y = Math.abs(Math.sin(elapsedTime * 3));
+  sphere.scale.y =
+    Math.abs(Math.sin(elapsedTime * 3)) + Math.abs(Math.cos(elapsedTime * 3));
 
   // Update the sphere shadow
   sphereShadow.position.x = sphere.position.x;
