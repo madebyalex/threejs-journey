@@ -10,7 +10,7 @@ import { DirectionalLightHelper, PCFSoftShadowMap } from 'three';
 
 const textureLoader = new THREE.TextureLoader();
 const bakedShadow = textureLoader.load('/textures/bakedShadow.jpg');
-console.log(bakedShadow);
+const simpleShadow = textureLoader.load('/textures/simpleShadow.jpg');
 
 /**
  * Base
@@ -28,12 +28,12 @@ const scene = new THREE.Scene();
  * Lights
  */
 // Ambient light
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+const ambientLight = new THREE.AmbientLight(0xff9850, 0.5);
 gui.add(ambientLight, 'intensity').min(0).max(1).step(0.001);
 scene.add(ambientLight);
 
 // Directional light
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.3);
+const directionalLight = new THREE.DirectionalLight(0xf1c40f, 0.35);
 directionalLight.position.set(2, 2, -1);
 gui.add(directionalLight, 'intensity').min(0).max(1).step(0.001);
 gui.add(directionalLight.position, 'x').min(-5).max(5).step(0.001);
@@ -59,7 +59,7 @@ directionalLightCameraHelper.visible = false;
 scene.add(directionalLightCameraHelper);
 
 // Spot light
-const spotLight = new THREE.SpotLight(0xffffff, 0.3, 10, Math.PI * 0.3);
+const spotLight = new THREE.SpotLight(0xff8a65, 0.3, 10, Math.PI * 0.3);
 spotLight.castShadow = true;
 spotLight.shadow.mapSize.width = 1024;
 spotLight.shadow.mapSize.height = 1024;
@@ -107,14 +107,23 @@ const sphere = new THREE.Mesh(
   material
 );
 
-const plane = new THREE.Mesh(
-  new THREE.PlaneBufferGeometry(5, 5),
-  new THREE.MeshBasicMaterial({
-    map: bakedShadow,
-  })
-);
+sphere.position.y = 1;
+
+const plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(5, 5), material);
 plane.rotation.x = -Math.PI * 0.5;
 plane.position.y = -0.5;
+
+const sphereShadow = new THREE.Mesh(
+  new THREE.PlaneBufferGeometry(1.5, 1.5),
+  new THREE.MeshBasicMaterial({
+    color: 0x000000,
+    alphaMap: simpleShadow,
+    transparent: true,
+  })
+);
+sphereShadow.rotation.x = -Math.PI * 0.5;
+sphereShadow.position.y = plane.position.y + 0.001;
+scene.add(sphereShadow);
 
 // Casting shadows
 sphere.castShadow = true;
@@ -182,6 +191,19 @@ const clock = new THREE.Clock();
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
+
+  // Update the sphere
+  sphere.position.x = Math.cos(elapsedTime) * 1.3;
+  sphere.position.z = Math.sin(elapsedTime) * 1.3;
+  sphere.position.y = Math.abs(Math.sin(elapsedTime * 3));
+
+  // Update the sphere shadow
+  sphereShadow.position.x = sphere.position.x;
+  sphereShadow.position.z = sphere.position.z;
+  sphereShadow.material.opacity = (1 - sphere.position.y) * 0.7 + 0.1;
+  sphereShadow.scale.y = 1 - sphere.position.y * 0.3;
+  sphereShadow.scale.x = 1 - sphere.position.y * 0.3;
+  //   console.log(sphere.position.y);
 
   // Update controls
   controls.update();
