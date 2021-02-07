@@ -163,14 +163,17 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
+
+// const camera = new THREE.OrthographicCamera(-3, 3, 3, -3, 0.2, 10);
 camera.position.x = 1;
 camera.position.y = 1;
-camera.position.z = 2;
+camera.position.z = 4;
 scene.add(camera);
 
 // Controls
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
+// controls.autoRotate = true;
 
 /**
  * Renderer
