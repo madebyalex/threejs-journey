@@ -53,12 +53,12 @@ particlesMaterial.depthWrite = false;
 particlesMaterial.blending = THREE.AdditiveBlending;
 
 const particlesGeometry = new THREE.BufferGeometry();
-const count = 20000;
+const particlesCount = 1000;
 
-const positionsArray = new Float32Array(count * 3);
-const colorsArray = new Float32Array(count * 3);
+const positionsArray = new Float32Array(particlesCount * 3);
+const colorsArray = new Float32Array(particlesCount * 3);
 
-for (let i = 0; i < count * 3; i++) {
+for (let i = 0; i < particlesCount * 3; i++) {
   positionsArray[i] = (Math.random() - 0.5) * 10;
   colorsArray[i] = Math.random();
 }
@@ -132,6 +132,21 @@ const clock = new THREE.Clock();
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
+
+  // Update particles
+  particles.rotation.y = elapsedTime * 0.07;
+
+  for (let i = 0; i < particlesCount; i++) {
+    const i3 = i * 3;
+
+    const x = particlesGeometry.attributes.position.array[i3];
+    particlesGeometry.attributes.position.array[i3 + 1] = Math.sin(
+      elapsedTime + x
+    ); // Moving particles on the axis Y
+  }
+
+  particlesGeometry.attributes.position.needsUpdate = true;
+  // console.log(particlesGeometry.attributes.position.array);
 
   // Update controls
   controls.update();
