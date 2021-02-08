@@ -32,7 +32,7 @@ const particlesTexture = textureLoader.load('/textures/particles/2.png');
 const particlesMaterial = new THREE.PointsMaterial({
   size: 0.1,
   sizeAttenuation: true,
-  color: '#FF88CC',
+  // color: '#FF88CC',
   //   map: particlesTexture,
   alphaMap: particlesTexture,
   transparent: true,
@@ -49,35 +49,31 @@ const particlesMaterial = new THREE.PointsMaterial({
 // #3 – .depthWrite
 particlesMaterial.depthWrite = false;
 
-const multiBufferGeometry = new THREE.BufferGeometry();
-const count = 5000;
+// #4 – Blending: Makes overlapped pixels brighter but affects performance if there are too much particles
+particlesMaterial.blending = THREE.AdditiveBlending;
+
+const particlesGeometry = new THREE.BufferGeometry();
+const count = 20000;
 
 const positionsArray = new Float32Array(count * 3);
+const colorsArray = new Float32Array(count * 3);
+
 for (let i = 0; i < count * 3; i++) {
   positionsArray[i] = (Math.random() - 0.5) * 10;
+  colorsArray[i] = Math.random();
 }
 
 const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3);
-multiBufferGeometry.setAttribute('position', positionsAttribute);
+const colorsAttribute = new THREE.BufferAttribute(colorsArray, 3);
+
+particlesGeometry.setAttribute('position', positionsAttribute);
+particlesGeometry.setAttribute('color', colorsAttribute);
+// particlesMaterial.color.set(particlesGeometry.color);
+
+particlesMaterial.vertexColors = true;
 
 // Points
-const particles = new THREE.Points(multiBufferGeometry, particlesMaterial);
-
-// const parameters = {
-//   phiLength: 6.3,
-// };
-
-// const maxPhiLength = particlesGeometry.parameters.phiLength;
-
-// gui
-//   .add(parameters, 'phiLength')
-//   .onChange(() => {
-//     particlesGeometry.parameters.phiLength = parameters.phiLength;
-//     console.log(particlesGeometry.parameters.phiLength);
-//   })
-//   .min(0)
-//   .max(maxPhiLength)
-//   .step(0.01);
+const particles = new THREE.Points(particlesGeometry, particlesMaterial);
 
 scene.add(particles);
 
