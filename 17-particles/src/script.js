@@ -26,7 +26,7 @@ const particlesTexture = textureLoader.load('/textures/particles/2.png');
  */
 
 //  Geometry
-// const particlesGeometry = new THREE.SphereGeometry(1, 32, 32);
+const particlesGeometry = new THREE.SphereGeometry(1, 32, 32);
 
 // Material
 const particlesMaterial = new THREE.PointsMaterial({
@@ -46,7 +46,7 @@ const particlesMaterial = new THREE.PointsMaterial({
 // #2 – .depthTest: Works fine but only with particles with the the same color and without other objects
 // particlesMaterial.depthTest = false;
 
-// #3 – .depthWrite
+// #3 – .depthWrite: Works the best (at least in this test ;) )
 particlesMaterial.depthWrite = false;
 
 const multiBufferGeometry = new THREE.BufferGeometry();
@@ -61,23 +61,25 @@ const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3);
 multiBufferGeometry.setAttribute('position', positionsAttribute);
 
 // Points
-const particles = new THREE.Points(multiBufferGeometry, particlesMaterial);
+const particles = new THREE.Points(particlesGeometry, particlesMaterial);
 
-// const parameters = {
-//   phiLength: 6.3,
-// };
+const parameters = {
+  phiLength: 6.3,
+};
 
-// const maxPhiLength = particlesGeometry.parameters.phiLength;
+const maxPhiLength = particlesGeometry.parameters.phiLength;
 
-// gui
-//   .add(parameters, 'phiLength')
-//   .onChange(() => {
-//     particlesGeometry.parameters.phiLength = parameters.phiLength;
-//     console.log(particlesGeometry.parameters.phiLength);
-//   })
-//   .min(0)
-//   .max(maxPhiLength)
-//   .step(0.01);
+console.log(particlesGeometry.parameters.phiLength);
+
+gui
+  .add(parameters, 'phiLength')
+  .onChange((e) => {
+    particlesGeometry.parameters.phiLength = parameters.phiLength;
+    console.log(e);
+  })
+  .min(0)
+  .max(6.3)
+  .step(0.01);
 
 scene.add(particles);
 
