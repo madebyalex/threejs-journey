@@ -67,15 +67,17 @@ const parameters = {
   phiLength: 6.3,
 };
 
-const maxPhiLength = particlesGeometry.parameters.phiLength;
+// const maxPhiLength = particlesGeometry.parameters.phiLength;
+console.log('Initial phiLength: ', particlesGeometry.parameters.phiLength);
 
-console.log(particlesGeometry.parameters.phiLength);
+particlesGeometry.parameters.phiLength = parameters.phiLength;
+console.log(particlesGeometry.parameters);
 
 gui
   .add(parameters, 'phiLength')
-  .onChange((e) => {
-    particlesGeometry.parameters.phiLength = parameters.phiLength;
-    console.log(e);
+  .onChange(() => {
+    particlesGeometry.parameters.phiLength.set(parameters.phiLength);
+    console.log('Adjusted phiLength: ', particlesGeometry.parameters.phiLength);
   })
   .min(0)
   .max(6.3)
