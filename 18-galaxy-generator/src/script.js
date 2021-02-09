@@ -20,9 +20,12 @@ const scene = new THREE.Scene();
  * Galaxy
  */
 const parameters = {};
-parameters.count = 3000;
-parameters.size = 0.02;
+parameters.count = 100000;
+parameters.size = 0.01;
 parameters.color = '#FF00FF';
+parameters.radius = 5;
+parameters.branches = 3;
+parameters.spin = 1;
 
 gui.addColor(parameters, 'color').onChange(() => {
   galaxyMaterial.color.set(parameters.color);
@@ -53,9 +56,17 @@ const generateGalaxy = () => {
   for (let i = 0; i < parameters.count; i++) {
     const i3 = i * 3;
 
-    positionsArray[i3] = (Math.random() - 0.5) * 10;
-    positionsArray[i3 + 1] = (Math.random() - 0.5) * 10;
-    positionsArray[i3 + 2] = (Math.random() - 0.5) * 10;
+    const radius = Math.random() * parameters.radius;
+    const branchAngle =
+      ((i % parameters.branches) / parameters.branches) * Math.PI * 2;
+
+    // if (i < 20) {
+    //   console.log(i, branchAngle);
+    // }
+
+    positionsArray[i3] = Math.cos(branchAngle) * radius;
+    positionsArray[i3 + 1] = 0;
+    positionsArray[i3 + 2] = Math.sin(branchAngle) * radius;
   }
 
   galaxyGeometry.setAttribute(
@@ -94,6 +105,24 @@ gui
   .step(0.001)
   .min(0.001)
   .max(0.1)
+  .onFinishChange(generateGalaxy);
+gui
+  .add(parameters, 'radius')
+  .step(0.01)
+  .min(0.01)
+  .max(20)
+  .onFinishChange(generateGalaxy);
+gui
+  .add(parameters, 'branches')
+  .step(1)
+  .min(2)
+  .max(12)
+  .onFinishChange(generateGalaxy);
+gui
+  .add(parameters, 'spin')
+  .step(0.1)
+  .min(-5)
+  .max(5)
   .onFinishChange(generateGalaxy);
 
 /**
