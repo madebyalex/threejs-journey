@@ -32,7 +32,7 @@ const particlesGeometry = new THREE.SphereGeometry(1, 32, 32);
 const particlesMaterial = new THREE.PointsMaterial({
   size: 0.1,
   sizeAttenuation: true,
-  color: '#FF88CC',
+  // color: '#FF88CC',
   //   map: particlesTexture,
   alphaMap: particlesTexture,
   transparent: true,
@@ -49,16 +49,22 @@ const particlesMaterial = new THREE.PointsMaterial({
 // #3 – .depthWrite: Works the best (at least in this test ;) )
 particlesMaterial.depthWrite = false;
 
-const multiBufferGeometry = new THREE.BufferGeometry();
-const count = 5000;
+// #4 – Blending: Makes overlapped pixels brighter but affects performance if there are too much particles
+particlesMaterial.blending = THREE.AdditiveBlending;
 
-const positionsArray = new Float32Array(count * 3);
-for (let i = 0; i < count * 3; i++) {
+const particlesGeometry = new THREE.BufferGeometry();
+const particlesCount = 1000;
+
+const positionsArray = new Float32Array(particlesCount * 3);
+const colorsArray = new Float32Array(particlesCount * 3);
+
+for (let i = 0; i < particlesCount * 3; i++) {
   positionsArray[i] = (Math.random() - 0.5) * 10;
+  colorsArray[i] = Math.random();
 }
 
 const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3);
-multiBufferGeometry.setAttribute('position', positionsAttribute);
+const colorsAttribute = new THREE.BufferAttribute(colorsArray, 3);
 
 // Points
 const particles = new THREE.Points(particlesGeometry, particlesMaterial);
@@ -80,6 +86,14 @@ gui
   .min(0)
   .max(6.3)
   .step(0.01);
+particlesGeometry.setAttribute('position', positionsAttribute);
+particlesGeometry.setAttribute('color', colorsAttribute);
+// particlesMaterial.color.set(particlesGeometry.color);
+
+particlesMaterial.vertexColors = true;
+
+// Points
+const particles = new THREE.Points(particlesGeometry, particlesMaterial);
 
 scene.add(particles);
 
@@ -138,6 +152,21 @@ const clock = new THREE.Clock();
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
+
+  // Update particles
+  particles.rotation.y = elapsedTime * 0.07;
+
+  for (let i = 0; i < particlesCount; i++) {
+    const i3 = i * 3;
+
+    const x = particlesGeometry.attributes.position.array[i3];
+    particlesGeometry.attributes.position.array[i3 + 1] = Math.sin(
+      elapsedTime + x
+    ); // Moving particles on the axis Y
+  }
+
+  particlesGeometry.attributes.position.needsUpdate = true;
+  // console.log(particlesGeometry.attributes.position.array);
 
   // Update controls
   controls.update();
