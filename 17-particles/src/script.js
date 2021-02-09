@@ -26,7 +26,6 @@ const particlesTexture = textureLoader.load('/textures/particles/2.png');
  */
 
 //  Geometry
-const particlesGeometry = new THREE.SphereGeometry(1, 32, 32);
 
 // Material
 const particlesMaterial = new THREE.PointsMaterial({
@@ -63,32 +62,16 @@ for (let i = 0; i < particlesCount * 3; i++) {
   colorsArray[i] = Math.random();
 }
 
-const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3);
-const colorsAttribute = new THREE.BufferAttribute(colorsArray, 3);
+particlesGeometry.setAttribute(
+  'position',
+  new THREE.BufferAttribute(positionsArray, 3)
+);
+particlesGeometry.setAttribute(
+  'color',
+  new THREE.BufferAttribute(colorsArray, 3)
+);
 
 // Points
-const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-
-const parameters = {
-  phiLength: 6.3,
-};
-
-const maxPhiLength = particlesGeometry.parameters.phiLength;
-
-console.log(particlesGeometry.parameters.phiLength);
-
-gui
-  .add(parameters, 'phiLength')
-  .onChange((e) => {
-    particlesGeometry.parameters.phiLength = parameters.phiLength;
-    console.log(e);
-  })
-  .min(0)
-  .max(6.3)
-  .step(0.01);
-particlesGeometry.setAttribute('position', positionsAttribute);
-particlesGeometry.setAttribute('color', colorsAttribute);
-// particlesMaterial.color.set(particlesGeometry.color);
 
 particlesMaterial.vertexColors = true;
 
