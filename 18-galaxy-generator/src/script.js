@@ -8,7 +8,7 @@ import { PointsMaterial } from 'three';
  * Base
  */
 // Debug
-const gui = new dat.GUI();
+const gui = new dat.GUI({ width: 320 });
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl');
@@ -20,14 +20,32 @@ const scene = new THREE.Scene();
  * Galaxy
  */
 const parameters = {};
-parameters.count = 10000;
+parameters.count = 3000;
 parameters.size = 0.02;
+parameters.color = '#FF00FF';
+
+gui.addColor(parameters, 'color').onChange(() => {
+  galaxyMaterial.color.set(parameters.color);
+});
+
+let galaxyGeometry = null;
+let galaxyMaterial = null;
+let galaxyPoints = null;
 
 const generateGalaxy = () => {
   /**
+   * Destroy old galaxy
+   */
+  if (galaxyPoints !== null) {
+    galaxyGeometry.dispose();
+    galaxyMaterial.dispose();
+    scene.remove(galaxyPoints);
+  }
+
+  /**
    * Geometry
    */
-  const galaxyGeometry = new THREE.BufferGeometry();
+  galaxyGeometry = new THREE.BufferGeometry();
 
   const positionsArray = new Float32Array(parameters.count * 3);
 
@@ -48,22 +66,35 @@ const generateGalaxy = () => {
   /**
    * Material
    */
-  const galaxyMaterial = new THREE.PointsMaterial({
+  galaxyMaterial = new THREE.PointsMaterial({
     size: parameters.size,
     sizeAttenuation: true,
     depthWrite: true,
     blending: THREE.AdditiveBlending,
-    // color: '#FFFFFF',
+    color: parameters.color,
   });
 
   /**
    * Points
    */
-  const points = new THREE.Points(galaxyGeometry, galaxyMaterial);
-  scene.add(points);
+  galaxyPoints = new THREE.Points(galaxyGeometry, galaxyMaterial);
+  scene.add(galaxyPoints);
 };
 
 generateGalaxy();
+
+gui
+  .add(parameters, 'count')
+  .step(100)
+  .min(100)
+  .max(100000)
+  .onFinishChange(generateGalaxy);
+gui
+  .add(parameters, 'size')
+  .step(0.001)
+  .min(0.001)
+  .max(0.1)
+  .onFinishChange(generateGalaxy);
 
 /**
  * Sizes
