@@ -9,6 +9,11 @@ import * as dat from 'dat.gui';
 // Debug
 const gui = new dat.GUI();
 
+const parameters = {
+  phiLength: 4.3,
+  color: '#FF88CC',
+};
+
 // Canvas
 const canvas = document.querySelector('canvas.webgl');
 
@@ -19,71 +24,54 @@ const scene = new THREE.Scene();
  * Textures
  */
 const textureLoader = new THREE.TextureLoader();
-const particlesTexture = textureLoader.load('/textures/particles/2.png');
+const objectTexture = textureLoader.load('/textures/particles/2.png');
 
 /**
- * Particles
+ * Object
  */
 
 //  Geometry
-const particlesGeometry = new THREE.SphereGeometry(1, 32, 32);
+const geometry = new THREE.SphereGeometry(1, 32, 32, 0, parameters.phiLength);
 
 // Material
-const particlesMaterial = new THREE.PointsMaterial({
+const material = new THREE.PointsMaterial({
   size: 0.1,
   sizeAttenuation: true,
-  color: '#FF88CC',
-  //   map: particlesTexture,
-  alphaMap: particlesTexture,
+  color: parameters.color,
+  alphaMap: objectTexture,
   transparent: true,
+  depthWrite: false,
 });
 
-// Multiple ways to fix issues with transparency in particles
-
-// #1 – .alphaTest: Kind of works but particles have dark pixels outside the colored part
-// particlesMaterial.alphaTest = 0.001;
-
-// #2 – .depthTest: Works fine but only with particles with the the same color and without other objects
-// particlesMaterial.depthTest = false;
-
-// #3 – .depthWrite: Works the best (at least in this test ;) )
-particlesMaterial.depthWrite = false;
-
-const multiBufferGeometry = new THREE.BufferGeometry();
-const count = 5000;
-
-const positionsArray = new Float32Array(count * 3);
-for (let i = 0; i < count * 3; i++) {
-  positionsArray[i] = (Math.random() - 0.5) * 10;
-}
-
-const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3);
-multiBufferGeometry.setAttribute('position', positionsAttribute);
-
 // Points
-const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+const particles = new THREE.Points(geometry, material);
+scene.add(particles);
 
-const parameters = {
-  phiLength: 6.3,
+const updateObject = () => {
+  console.log('phiLength changed!');
 };
 
-// const maxPhiLength = particlesGeometry.parameters.phiLength;
-console.log('Initial phiLength: ', particlesGeometry.parameters.phiLength);
-
-particlesGeometry.parameters.phiLength = parameters.phiLength;
-console.log(particlesGeometry.parameters);
+// Tweaks
+gui.addColor(parameters, 'color').onChange(() => {
+  material.color.set(parameters.color);
+});
 
 gui
   .add(parameters, 'phiLength')
-  .onChange(() => {
-    particlesGeometry.parameters.phiLength.set(parameters.phiLength);
-    console.log('Adjusted phiLength: ', particlesGeometry.parameters.phiLength);
+  // .onChange(updateObject)
+  .onFinishChange(() => {
+    if (particles !== null) {
+      geometry.dispose();
+      scene.remove(particles);
+    }
+
+    geometry = new THREE.SphereGeometry(1, 32, 32, 0, parameters.phiLength);
+    particles = new THREE.Points(geometry, material);
+    scene.add(particles);
   })
   .min(0)
   .max(6.3)
   .step(0.01);
-
-scene.add(particles);
 
 /**
  * Sizes
@@ -140,14 +128,8 @@ const clock = new THREE.Clock();
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
-
-  // Update controls
   controls.update();
-
-  // Render
   renderer.render(scene, camera);
-
-  // Call tick again on the next frame
   window.requestAnimationFrame(tick);
 };
 
