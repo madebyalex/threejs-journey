@@ -232,7 +232,7 @@ const tick = () => {
 
   // Update controls
   controls.update();
-  //   controls.autoRotate = true;
+  controls.autoRotate = true;
 
   // Render
   renderer.render(scene, camera);
