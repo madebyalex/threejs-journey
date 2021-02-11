@@ -42,18 +42,6 @@ scene.add(object1, object2, object3);
  */
 const raycaster = new THREE.Raycaster();
 
-const rayOrigin = new THREE.Vector3(-3, 0, 0);
-const rayDirection = new THREE.Vector3(10, 0, 0);
-rayDirection.normalize();
-
-raycaster.set(rayOrigin, rayDirection);
-
-const intersect = raycaster.intersectObject(object2);
-console.log(intersect);
-
-const intersects = raycaster.intersectObjects([object1, object2, object3]);
-console.log(intersects);
-
 /**
  * Sizes
  */
@@ -109,6 +97,36 @@ const clock = new THREE.Clock();
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
+
+  // Animate objects
+  object1.position.y = Math.sin(elapsedTime * 0.3) * 1.6;
+  object2.position.y = Math.sin(elapsedTime * 0.8) * 1.6;
+  object3.position.y = Math.sin(elapsedTime * 1.4) * 1.6;
+
+  // Cast a ray
+  const rayOrigin = new THREE.Vector3(-3, 0, 0);
+  const rayDirection = new THREE.Vector3(10, 0, 0);
+  rayDirection.normalize();
+  raycaster.set(rayOrigin, rayDirection);
+
+  const objectsToTest = [object1, object2, object3];
+  const intersects = raycaster.intersectObjects(objectsToTest);
+
+  //   if (intersects.length > 0) {
+  //     console.log('Intersecting objects: ', intersects.length);
+  //   }
+
+  for (const object of objectsToTest) {
+    object.material.color.set('#FF0000');
+  }
+
+  for (const intersect of intersects) {
+    intersect.object.material.color.set('#0000FF');
+  }
+
+  if (intersects.length == 3) {
+    console.log('Bingo!');
+  }
 
   // Update controls
   controls.update();
