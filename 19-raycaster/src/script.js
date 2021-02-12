@@ -77,6 +77,26 @@ window.addEventListener('mousemove', (event) => {
   // console.log(mouse.x, mouse.y);
 });
 
+window.addEventListener('click', (event) => {
+  if (currentIntersect) {
+    // console.log(currentIntersect.object.id);
+
+    switch (currentIntersect.object) {
+      case object1:
+        console.log('Click on object1!');
+        break;
+      case object2:
+        console.log('Click on object 2!');
+        break;
+      case object3:
+        console.log('Click on object 3!');
+        break;
+      default:
+        console.log('Click on something else');
+    }
+  }
+});
+
 /**
  * Camera
  */
