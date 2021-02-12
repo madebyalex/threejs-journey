@@ -42,6 +42,8 @@ scene.add(object1, object2, object3);
  */
 const raycaster = new THREE.Raycaster();
 
+let currentIntersect = null;
+
 /**
  * Sizes
  */
@@ -65,6 +67,17 @@ window.addEventListener('resize', () => {
 });
 
 /**
+ * Mouse
+ */
+const mouse = new THREE.Vector2();
+
+window.addEventListener('mousemove', (event) => {
+  mouse.x = (event.clientX / sizes.width) * 2 - 1;
+  mouse.y = -(event.clientY / sizes.height) * 2 + 1;
+  // console.log(mouse.x, mouse.y);
+});
+
+/**
  * Camera
  */
 // Base camera
@@ -74,7 +87,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.z = 3;
+camera.position.z = 5;
 scene.add(camera);
 
 // Controls
@@ -103,18 +116,32 @@ const tick = () => {
   object2.position.y = Math.sin(elapsedTime * 0.8) * 1.6;
   object3.position.y = Math.sin(elapsedTime * 1.4) * 1.6;
 
-  // Cast a ray
-  const rayOrigin = new THREE.Vector3(-3, 0, 0);
-  const rayDirection = new THREE.Vector3(10, 0, 0);
-  rayDirection.normalize();
-  raycaster.set(rayOrigin, rayDirection);
+  // #1 Cast a ray
+  // const rayOrigin = new THREE.Vector3(-3, 0, 0);
+  // const rayDirection = new THREE.Vector3(10, 0, 0);
+  // rayDirection.normalize();
+  // raycaster.set(rayOrigin, rayDirection);
+
+  // const objectsToTest = [object1, object2, object3];
+  // const intersects = raycaster.intersectObjects(objectsToTest);
+
+  // for (const object of objectsToTest) {
+  //   object.material.color.set('#FF0000');
+  // }
+
+  // for (const intersect of intersects) {
+  //   intersect.object.material.color.set('#0000FF');
+  // }
+
+  // if (intersects.length == 3) {
+  //   console.log('Bingo!');
+  // }
+
+  // #2 Cast a ray with a mouse
+  raycaster.setFromCamera(mouse, camera);
 
   const objectsToTest = [object1, object2, object3];
   const intersects = raycaster.intersectObjects(objectsToTest);
-
-  //   if (intersects.length > 0) {
-  //     console.log('Intersecting objects: ', intersects.length);
-  //   }
 
   for (const object of objectsToTest) {
     object.material.color.set('#FF0000');
@@ -124,8 +151,19 @@ const tick = () => {
     intersect.object.material.color.set('#0000FF');
   }
 
-  if (intersects.length == 3) {
-    console.log('Bingo!');
+  if (intersects.length) {
+    if (currentIntersect === null) {
+      console.log('Mouse enter');
+    }
+
+    currentIntersect = intersects[0];
+    // console.log(currentIntersect.object.id);
+  } else {
+    if (currentIntersect) {
+      console.log('Mouse leave');
+    }
+
+    currentIntersect = null;
   }
 
   // Update controls
