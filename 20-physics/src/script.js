@@ -9,6 +9,32 @@ import CANNON, { Vec3 } from 'cannon';
  */
 const gui = new dat.GUI();
 const debugObject = {};
+const colors = [
+  '#1abc9c',
+  '#2ecc71',
+  '#3498db',
+  '#9b59b6',
+  '#34495e',
+  '#16a085',
+  '#27ae60',
+  '#2980b9',
+  '#8e44ad',
+  '#2c3e50',
+  '#f1c40f',
+  '#e67e22',
+  '#e74c3c',
+  '#ecf0f1',
+  '#95a5a6',
+  '#f39c12',
+  '#d35400',
+  '#c0392b',
+  '#bdc3c7',
+  '#7f8c8d',
+];
+
+const shuffleArray = (array) => {
+  array.sort(() => Math.random() - 0.5);
+};
 
 debugObject.createSphere = () => {
   createSphere(Math.random() * 0.5 + 0.1, {
@@ -16,6 +42,12 @@ debugObject.createSphere = () => {
     y: (Math.random() + 2) * 2,
     z: (Math.random() - 0.5) * 3,
   });
+
+  // createSphere(Math.random() * 0.5 + 0.1, {
+  //   x: 0,
+  //   y: 0,
+  //   z: 0,
+  // });
 };
 
 gui.add(debugObject, 'createSphere');
@@ -57,26 +89,12 @@ const defaultContactMaterial = new CANNON.ContactMaterial(
   defaultMaterial,
   defaultMaterial,
   {
-    friction: 0.1,
-    restitution: 0.7,
+    friction: 0.15,
+    restitution: 0.6,
   }
 );
 world.addContactMaterial(defaultContactMaterial);
 world.defaultContactMaterial = defaultContactMaterial;
-
-// Sphere
-// const sphereShape = new CANNON.Sphere(0.5);
-// const sphereBody = new CANNON.Body({
-//   mass: 1,
-//   position: new CANNON.Vec3(0, 3, 0),
-//   shape: sphereShape,
-//   // material: defaultMaterial,
-// });
-// sphereBody.applyLocalForce(
-//   new CANNON.Vec3(150, 0, 0),
-//   new CANNON.Vec3(0, 0, 0)
-// );
-// world.addBody(sphereBody);
 
 // Floor
 const floorShape = new CANNON.Plane();
@@ -86,21 +104,6 @@ floorBody.addShape(floorShape);
 floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(-1, 0, 0), Math.PI * 0.5);
 // floorBody.material = defaultMaterial;
 world.addBody(floorBody);
-
-/**
- * Test sphere
- */
-// const sphere = new THREE.Mesh(
-//   new THREE.SphereGeometry(0.5, 32, 32),
-//   new THREE.MeshStandardMaterial({
-//     metalness: 0.3,
-//     roughness: 0.4,
-//     envMap: environmentMapTexture,
-//   })
-// );
-// sphere.castShadow = true;
-// sphere.position.y = 0.5;
-// scene.add(sphere);
 
 /**
  * Floor
@@ -121,10 +124,10 @@ scene.add(floor);
 /**
  * Lights
  */
-const ambientLight = new THREE.AmbientLight(0xff00ff, 0.7);
+const ambientLight = new THREE.AmbientLight('#FFFFFF', 0.7);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.2);
+const directionalLight = new THREE.DirectionalLight(0xfef3e1, 0.5);
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.set(1024, 1024);
 directionalLight.shadow.camera.far = 15;
@@ -191,10 +194,16 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 const objectsToUpdate = [];
 
 const createSphere = (radius, position) => {
+  // shuffleArray(colors);
+  const randomIndex = Math.floor(Math.random() * colors.length);
+  const randomColor = colors[randomIndex];
+  console.log(randomColor);
+
   // Three.js mesh
   const mesh = new THREE.Mesh(
     new THREE.SphereGeometry(radius, 24, 24),
     new THREE.MeshStandardMaterial({
+      color: randomColor,
       metalness: 0.3,
       roughness: 0.4,
       envMap: environmentMapTexture,
