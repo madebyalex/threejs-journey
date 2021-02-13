@@ -41,18 +41,17 @@ const world = new CANNON.World();
 world.gravity.set(0, -9.82, 0);
 
 // Materials
-const concreteMaterial = new CANNON.Material('concrete');
-const plasticMaterial = new CANNON.Material('plastic');
-
-const concretePlasticContactMaterial = new CANNON.ContactMaterial(
-  concreteMaterial,
-  plasticMaterial,
+const defaultMaterial = new CANNON.Material('default');
+const defaultContactMaterial = new CANNON.ContactMaterial(
+  defaultMaterial,
+  defaultMaterial,
   {
     friction: 0.1,
     restitution: 0.7,
   }
 );
-world.addContactMaterial(concretePlasticContactMaterial);
+world.addContactMaterial(defaultContactMaterial);
+world.defaultContactMaterial = defaultContactMaterial;
 
 // Sphere
 const sphereShape = new CANNON.Sphere(0.5);
@@ -60,8 +59,12 @@ const sphereBody = new CANNON.Body({
   mass: 1,
   position: new CANNON.Vec3(0, 3, 0),
   shape: sphereShape,
-  material: plasticMaterial,
+  // material: defaultMaterial,
 });
+sphereBody.applyLocalForce(
+  new CANNON.Vec3(150, 0, 0),
+  new CANNON.Vec3(0, 0, 0)
+);
 world.addBody(sphereBody);
 
 // Floor
@@ -70,7 +73,7 @@ const floorBody = new CANNON.Body();
 floorBody.mass = 0; // Mass equal zero means that this object is static
 floorBody.addShape(floorShape);
 floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(-1, 0, 0), Math.PI * 0.5);
-floorBody.material = concreteMaterial;
+// floorBody.material = defaultMaterial;
 world.addBody(floorBody);
 
 /**
@@ -107,7 +110,7 @@ scene.add(floor);
 /**
  * Lights
  */
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+const ambientLight = new THREE.AmbientLight(0xff00ff, 0.7);
 scene.add(ambientLight);
 
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.2);
@@ -183,6 +186,8 @@ const tick = () => {
   oldElapsedTime = elapsedTime;
 
   // Update physics world
+  sphereBody.applyForce(new CANNON.Vec3(-0.5, 0, 0), sphereBody.position);
+
   world.step(1 / 60, deltaTime, 3);
 
   sphere.position.copy(sphereBody.position);
