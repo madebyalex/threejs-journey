@@ -9,28 +9,6 @@ import CANNON, { Vec3 } from 'cannon';
  */
 const gui = new dat.GUI();
 const debugObject = {};
-const colors = [
-  '#1abc9c',
-  '#2ecc71',
-  '#3498db',
-  '#9b59b6',
-  '#34495e',
-  '#16a085',
-  '#27ae60',
-  '#2980b9',
-  '#8e44ad',
-  '#2c3e50',
-  '#f1c40f',
-  '#e67e22',
-  '#e74c3c',
-  '#ecf0f1',
-  '#95a5a6',
-  '#f39c12',
-  '#d35400',
-  '#c0392b',
-  '#bdc3c7',
-  '#7f8c8d',
-];
 
 const shuffleArray = (array) => {
   array.sort(() => Math.random() - 0.5);
@@ -192,23 +170,46 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
  * Utils
  */
 const objectsToUpdate = [];
+const colors = [
+  '#1abc9c',
+  '#2ecc71',
+  '#3498db',
+  '#9b59b6',
+  '#34495e',
+  '#16a085',
+  '#27ae60',
+  '#2980b9',
+  '#8e44ad',
+  '#2c3e50',
+  '#f1c40f',
+  '#e67e22',
+  '#e74c3c',
+  '#ecf0f1',
+  '#95a5a6',
+  '#f39c12',
+  '#d35400',
+  '#c0392b',
+  '#bdc3c7',
+  '#7f8c8d',
+];
+
+const sphereGeometry = new THREE.SphereGeometry(1, 24, 24);
 
 const createSphere = (radius, position) => {
-  // shuffleArray(colors);
+  // Get random color
   const randomIndex = Math.floor(Math.random() * colors.length);
   const randomColor = colors[randomIndex];
-  console.log(randomColor);
 
   // Three.js mesh
-  const mesh = new THREE.Mesh(
-    new THREE.SphereGeometry(radius, 24, 24),
-    new THREE.MeshStandardMaterial({
-      color: randomColor,
-      metalness: 0.3,
-      roughness: 0.4,
-      envMap: environmentMapTexture,
-    })
-  );
+  const sphereMaterial = new THREE.MeshStandardMaterial({
+    metalness: 0.3,
+    roughness: 0.4,
+    envMap: environmentMapTexture,
+    color: randomColor,
+  });
+
+  const mesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  mesh.scale.set(radius, radius, radius);
 
   mesh.castShadow = true;
   mesh.position.copy(position);
