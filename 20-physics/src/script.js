@@ -20,12 +20,6 @@ debugObject.createSphere = () => {
     y: (Math.random() + 2) * 2,
     z: (Math.random() - 0.5) * 3,
   });
-
-  // createSphere(Math.random() * 0.5 + 0.1, {
-  //   x: 0,
-  //   y: 0,
-  //   z: 0,
-  // });
 };
 
 debugObject.createBox = () => {
@@ -73,6 +67,8 @@ const environmentMapTexture = cubeTextureLoader.load([
  */
 // World
 const world = new CANNON.World();
+world.broadphase = new CANNON.SAPBroadphase(world);
+world.allowSleep = true;
 world.gravity.set(0, -9.82, 0);
 
 // Materials
@@ -240,6 +236,7 @@ const createSphere = (radius, position) => {
     material: defaultMaterial,
   });
   body.position.copy(position);
+  body.sleepSpeedLimit = 0.3;
   world.addBody(body);
 
   // Save in objects to update
@@ -284,6 +281,7 @@ const createBox = (width, height, depth, position) => {
   });
 
   body.position.copy(position);
+  body.sleepSpeedLimit = 0.3;
   world.addBody(body);
 
   objectsToUpdate.push({ mesh, body });
@@ -301,11 +299,9 @@ const tick = () => {
   oldElapsedTime = elapsedTime;
 
   // Update physics world
-  // sphereBody.applyForce(new CANNON.Vec3(-0.5, 0, 0), sphereBody.position);
 
   world.step(1 / 60, deltaTime, 3);
 
-  // sphere.position.copy(sphereBody.position);
   for (const object of objectsToUpdate) {
     object.mesh.position.copy(object.body.position);
     object.mesh.quaternion.copy(object.body.quaternion);
