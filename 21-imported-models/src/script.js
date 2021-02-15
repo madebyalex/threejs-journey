@@ -22,19 +22,30 @@ const scene = new THREE.Scene();
 const gltfLoader = new GLTFLoader();
 
 gltfLoader.load(
-  '/models/Duck/glTF/Duck.gltf',
-  //   '/models/Duck/glTF-Binary/Duck.glb',
-  //   '/models/Duck/glTF-Embedded/Duck.gltf',
+  '/models/FlightHelmet/glTF/FlightHelmet.gltf',
+
   (gltf) => {
-    // console.log(gltf);
-    scene.add(gltf.scene.children[0]);
+    console.log(gltf);
+
+    // Method #1
+    // while (gltf.scene.children.length) {
+    //   scene.add(gltf.scene.children[0]);
+    // }
+
+    // Method #2
+    const children = [...gltf.scene.children];
+
+    for (const child of children) {
+      scene.add(child);
+    }
+
+    // Method #3
+    // for (const child of gltf.scene.children) {
+    //   const clonedChild = child.clone();
+    //   scene.add(clonedChild);
+    //   console.log(clonedChild.id);
+    // }
   }
-  //   () => {
-  //     console.log('Progress loading');
-  //   },
-  //   () => {
-  //     console.log('Error loading');
-  //   }
 );
 
 /**
