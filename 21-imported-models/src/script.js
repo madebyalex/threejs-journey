@@ -11,6 +11,10 @@ import * as dat from 'dat.gui';
 // Debug
 const gui = new dat.GUI();
 
+const parameters = {
+  speed: 2,
+};
+
 // Canvas
 const canvas = document.querySelector('canvas.webgl');
 
@@ -20,42 +24,36 @@ const scene = new THREE.Scene();
 /**
  * Models
  */
-const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath('/draco/');
 
 const gltfLoader = new GLTFLoader();
-gltfLoader.setDRACOLoader(dracoLoader);
+
+let mixer = null;
+let action = null;
 
 gltfLoader.load(
-  //   '/models/FlightHelmet/glTF/FlightHelmet.gltf',
-  '/models/Duck/glTF-Draco/Duck.gltf',
+  '/models/Fox/glTF/Fox.gltf',
 
   (gltf) => {
-    console.log(gltf);
-
-    // Method #1
-    // while (gltf.scene.children.length) {
-    //   scene.add(gltf.scene.children[0]);
-    // }
-
-    // Method #2
-    // const children = [...gltf.scene.children];
-
-    // for (const child of children) {
-    //   scene.add(child);
-    // }
-
-    // Method #3
-    // for (const child of gltf.scene.children) {
-    //   const clonedChild = child.clone();
-    //   scene.add(clonedChild);
-    //   console.log(clonedChild.id);
-    // }
-
-    // Method #4 – The simplest one
+    // console.log(gltf);
+    gltf.scene.scale.set(0.02, 0.02, 0.02);
     scene.add(gltf.scene);
+
+    mixer = new THREE.AnimationMixer(gltf.scene);
+    action = mixer.clipAction(gltf.animations[2]);
+    action.timeScale = parameters.speed;
+    // console.log(action);
+    action.play();
   }
 );
+
+gui
+  .add(parameters, 'speed')
+  .min(0.1)
+  .max(5)
+  .step(0.1)
+  .onFinishChange(() => {
+    action.timeScale = parameters.speed;
+  });
 
 /**
  * Floor
@@ -150,6 +148,11 @@ const tick = () => {
   const elapsedTime = clock.getElapsedTime();
   const deltaTime = elapsedTime - previousTime;
   previousTime = elapsedTime;
+
+  // Model animation
+  if (mixer) {
+    mixer.update(deltaTime);
+  }
 
   // Update controls
   controls.update();
