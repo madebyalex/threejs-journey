@@ -2,58 +2,133 @@ import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 import * as dat from 'dat.gui';
 
 /**
  * Base
  */
-// Debug
-const gui = new dat.GUI();
 
-const parameters = {
-  speed: 2,
-};
+let stats, container, gui, model, mixer, actions, activeAction, previousAction;
+const api = { state: 'Survey' };
 
-// Canvas
+// Canvas & Container
 const canvas = document.querySelector('canvas.webgl');
+container = document.createElement('div');
+document.body.appendChild(container);
 
-// Scene
-const scene = new THREE.Scene();
+// Stats
+stats = new Stats();
+container.appendChild(stats.dom);
 
 /**
- * Models
+ * GUI
  */
+const parameters = {
+  speed: 1,
+};
+
+// Scene
+const path = 'textures/cube/01/';
+const format = '.png';
+const urls = [
+  path + 'px' + format,
+  path + 'nx' + format,
+  path + 'py' + format,
+  path + 'ny' + format,
+  path + 'pz' + format,
+  path + 'nz' + format,
+];
+
+const textureCube = new THREE.CubeTextureLoader().load(urls);
+
+const scene = new THREE.Scene();
+scene.background = textureCube;
+
+// Model
 
 const gltfLoader = new GLTFLoader();
-
-let mixer = null;
-let action = null;
 
 gltfLoader.load(
   '/models/Fox/glTF/Fox.gltf',
 
   (gltf) => {
-    // console.log(gltf);
-    gltf.scene.scale.set(0.02, 0.02, 0.02);
-    scene.add(gltf.scene);
+    model = gltf.scene;
+    // console.log(gltf.animations);
 
-    mixer = new THREE.AnimationMixer(gltf.scene);
-    action = mixer.clipAction(gltf.animations[2]);
-    action.timeScale = parameters.speed;
-    // console.log(action);
-    action.play();
+    model.scale.set(0.02, 0.02, 0.02);
+    model.castShadow = true;
+    scene.add(model);
+
+    createGUI(model, gltf.animations);
+  },
+  undefined,
+  (e) => {
+    console.log(e);
   }
 );
 
-gui
-  .add(parameters, 'speed')
-  .min(0.1)
-  .max(5)
-  .step(0.1)
-  .onFinishChange(() => {
-    action.timeScale = parameters.speed;
+/**
+ * GUI
+ */
+
+function createGUI(model, animations) {
+  const states = ['Survey', 'Walk', 'Run'];
+
+  gui = new dat.GUI();
+
+  mixer = new THREE.AnimationMixer(model);
+  actions = {};
+
+  for (let i = 0; i < animations.length; i++) {
+    const clip = animations[i];
+    const action = mixer.clipAction(clip);
+    actions[clip.name] = action;
+    if (states.indexOf(clip.name) >= 3) {
+      action.clampWhenFinished = true;
+      action.loop = THREE.LoopOnce;
+    }
+  }
+
+  const statesFolder = gui.addFolder('States');
+  const clipControl = statesFolder
+    .add(api, 'state')
+    .options(states)
+    .name('State');
+
+  clipControl.onChange(function () {
+    fadeToAction(api.state, 0.5);
   });
+  statesFolder.open();
+
+  gui
+    .add(parameters, 'speed')
+    .min(0.1)
+    .max(5)
+    .step(0.1)
+    .onFinishChange(() => {
+      activeAction.timeScale = parameters.speed;
+    });
+
+  activeAction = actions['Survey'];
+  activeAction.play();
+}
+
+function fadeToAction(name, duration) {
+  previousAction = activeAction;
+  activeAction = actions[name];
+
+  if (previousAction !== activeAction) {
+    previousAction.fadeOut(duration);
+  }
+
+  activeAction
+    .reset()
+    .setEffectiveTimeScale(1)
+    .setEffectiveWeight(1)
+    .fadeIn(duration)
+    .play();
+}
 
 /**
  * Floor
@@ -62,8 +137,10 @@ const floor = new THREE.Mesh(
   new THREE.PlaneGeometry(10, 10),
   new THREE.MeshStandardMaterial({
     color: '#444444',
-    metalness: 0,
-    roughness: 0.5,
+    transparent: true,
+    opacity: 0,
+    // metalness: 0,
+    // roughness: 0.5,
   })
 );
 floor.receiveShadow = true;
@@ -119,7 +196,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(2, 2, 2);
+camera.position.set(1.8, 0.8, 2);
 scene.add(camera);
 
 // Controls
@@ -162,6 +239,9 @@ const tick = () => {
 
   // Call tick again on the next frame
   window.requestAnimationFrame(tick);
+
+  // Update stats
+  stats.update();
 };
 
 tick();
