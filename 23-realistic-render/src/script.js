@@ -35,8 +35,9 @@ const updateAllMaterials = () => {
       child.material instanceof THREE.MeshStandardMaterial
     ) {
       //   console.log(child);
-      child.material.envMap = environmentMap;
+      //   child.material.envMap = environmentMap;
       child.material.envMapIntensity = debugObject.envMapIntensity;
+      child.material.needsUpdate = true;
     }
   });
 };
@@ -44,16 +45,20 @@ const updateAllMaterials = () => {
 /**
  * Environment map
  */
+const mapID = 0;
 const environmentMap = cubeTextureLoader.load([
-  '/textures/environmentMaps/3/px.jpg',
-  '/textures/environmentMaps/3/nx.jpg',
-  '/textures/environmentMaps/3/py.jpg',
-  '/textures/environmentMaps/3/ny.jpg',
-  '/textures/environmentMaps/3/pz.jpg',
-  '/textures/environmentMaps/3/nz.jpg',
+  `/textures/environmentMaps/${mapID}/px.jpg`,
+  `/textures/environmentMaps/${mapID}/nx.jpg`,
+  `/textures/environmentMaps/${mapID}/py.jpg`,
+  `/textures/environmentMaps/${mapID}/ny.jpg`,
+  `/textures/environmentMaps/${mapID}/pz.jpg`,
+  `/textures/environmentMaps/${mapID}/nz.jpg`,
 ]);
 scene.background = environmentMap;
-debugObject.envMapIntensity = 2.2;
+scene.environment = environmentMap;
+environmentMap.encoding = THREE.sRGBEncoding;
+
+debugObject.envMapIntensity = 5;
 gui
   .add(debugObject, 'envMapIntensity')
   .min(0)
@@ -162,6 +167,30 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.physicallyCorrectLights = true;
+renderer.outputEncoding = THREE.sRGBEncoding;
+
+// renderer.toneMapping = THREE.LinearToneMapping;
+renderer.toneMapping = THREE.ReinhardToneMapping;
+// renderer.toneMapping = THREE.CineonToneMapping;
+// renderer.toneMapping = THREE.ACESFilmicToneMapping;
+
+renderer.toneMappingExposure = 3;
+
+gui
+  .add(renderer, 'toneMapping', {
+    No: THREE.NoToneMapping,
+    Linear: THREE.LinearToneMapping,
+    Cineon: THREE.CineonToneMapping,
+    Reinhard: THREE.ReinhardToneMapping,
+    ACESFilmic: THREE.ACESFilmicToneMapping,
+  })
+  .onFinishChange(() => {
+    renderer.toneMapping = Number(renderer.toneMapping);
+    updateAllMaterials();
+  });
+
+gui.add(renderer, 'toneMappingExposure').min(0).max(10).step(0.001);
 
 /**
  * Animate
