@@ -20,7 +20,11 @@ gltfLoader.setDRACOLoader(dracoLoader);
  */
 // Debug
 const gui = new dat.GUI();
-const debugObject = {};
+const debugObject = {
+  envMapIntensity: 2.04,
+  lightIntensity: 1.28,
+  toneMappingExposure: 1.822,
+};
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl');
@@ -63,7 +67,6 @@ scene.background = environmentMap;
 scene.environment = environmentMap;
 environmentMap.encoding = THREE.sRGBEncoding;
 
-debugObject.envMapIntensity = 2.1;
 gui
   .add(debugObject, 'envMapIntensity')
   .min(0)
@@ -101,7 +104,10 @@ gltfLoader.load('/models/hamburger-draco3.glb', (gltf) => {
 /**
  * Lights
  */
-const directionalLight = new THREE.DirectionalLight('#FFFFFF', 1);
+const directionalLight = new THREE.DirectionalLight(
+  '#FFFFFF',
+  debugObject.lightIntensity
+);
 directionalLight.position.set(0.25, 3, -2.25);
 directionalLight.castShadow = true;
 directionalLight.shadow.camera.far = 15;
@@ -201,7 +207,7 @@ renderer.toneMapping = THREE.LinearToneMapping;
 // renderer.toneMapping = THREE.CineonToneMapping;
 // renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
-renderer.toneMappingExposure = 3;
+renderer.toneMappingExposure = debugObject.toneMappingExposure;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
