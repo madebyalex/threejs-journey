@@ -63,7 +63,7 @@ scene.background = environmentMap;
 scene.environment = environmentMap;
 environmentMap.encoding = THREE.sRGBEncoding;
 
-debugObject.envMapIntensity = 5;
+debugObject.envMapIntensity = 2.1;
 gui
   .add(debugObject, 'envMapIntensity')
   .min(0)
@@ -75,15 +75,18 @@ gui
  * Models
  */
 
+let model = null;
+
 // gltfLoader.load('/models/FlightHelmet/glTF/FlightHelmet.gltf', (gltf) => {
 // gltfLoader.load('/models/hamburger.glb', (gltf) => {
-gltfLoader.load('/models/hamburger-draco2.glb', (gltf) => {
-  //   console.log(gltf);
+gltfLoader.load('/models/hamburger-draco3.glb', (gltf) => {
+  // console.log(gltf);
   // gltf.scene.scale.set(7, 7, 7);
   gltf.scene.scale.set(0.25, 0.25, 0.25);
   gltf.scene.position.set(0, -2.2, 0);
   gltf.scene.rotation.y = Math.PI * 0.5;
   scene.add(gltf.scene);
+  model = gltf.scene;
 
   gui
     .add(gltf.scene.rotation, 'y')
@@ -102,7 +105,7 @@ const directionalLight = new THREE.DirectionalLight('#FFFFFF', 1);
 directionalLight.position.set(0.25, 3, -2.25);
 directionalLight.castShadow = true;
 directionalLight.shadow.camera.far = 15;
-directionalLight.shadow.mapSize.set(1024, 1024);
+directionalLight.shadow.mapSize.set(1024 * 2, 1024 * 2);
 directionalLight.shadow.normalBias = 0.05;
 scene.add(directionalLight);
 
@@ -136,6 +139,10 @@ gui
   .max(5)
   .step(0.001)
   .name('lightZ');
+
+// Hemisphere
+const hemisphereLight = new THREE.HemisphereLight(0xffde3e, 0x311304, 0.3);
+scene.add(hemisphereLight);
 
 /**
  * Sizes
@@ -175,6 +182,7 @@ scene.add(camera);
 // Controls
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
+// controls.autoRotate = true;
 
 /**
  * Renderer
@@ -188,8 +196,8 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.physicallyCorrectLights = true;
 renderer.outputEncoding = THREE.sRGBEncoding;
 
-// renderer.toneMapping = THREE.LinearToneMapping;
-renderer.toneMapping = THREE.ReinhardToneMapping;
+renderer.toneMapping = THREE.LinearToneMapping;
+// renderer.toneMapping = THREE.ReinhardToneMapping;
 // renderer.toneMapping = THREE.CineonToneMapping;
 // renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
@@ -215,7 +223,19 @@ gui.add(renderer, 'toneMappingExposure').min(0).max(10).step(0.001);
 /**
  * Animate
  */
+const clock = new THREE.Clock();
+let oldElapsedTime = 0;
+
 const tick = () => {
+  const elapsedTime = clock.getElapsedTime();
+  const deltaTime = elapsedTime - oldElapsedTime;
+  oldElapsedTime = elapsedTime;
+
+  // Rotate the model
+  if (model) {
+    model.rotation.y += deltaTime / 5;
+  }
+
   // Update controls
   controls.update();
 
