@@ -5,6 +5,8 @@ uniform mat4 modelMatrix;
 attribute vec3 position;
 attribute float aRandom;
 
+varying float vRandom;
+
 void main() {
   
   // gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
@@ -16,4 +18,6 @@ void main() {
   vec4 projectedPosition = projectionMatrix * viewPosition;
 
   gl_Position = projectedPosition;
+
+  vRandom = aRandom;
 }
