@@ -21,13 +21,13 @@ const scene = new THREE.Scene();
  * Textures
  */
 const textureLoader = new THREE.TextureLoader();
-const flagTexture = textureLoader.load('/textures/flag-french.jpg');
+const flagTexture = textureLoader.load('/textures/flag-promo.png');
 
 /**
  * Test mesh
  */
 // Geometry
-const geometry = new THREE.PlaneGeometry(1.5, 1, 32, 32);
+const geometry = new THREE.PlaneGeometry(1, 1, 32, 32);
 
 const count = geometry.attributes.position.count;
 const randoms = new Float32Array(count);
@@ -39,7 +39,7 @@ for (let i = 0; i < count; i++) {
 geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
 
 // Material
-const material = new THREE.RawShaderMaterial({
+const material = new THREE.ShaderMaterial({
   vertexShader: testVertexShader,
   fragmentShader: testFragmentShader,
   side: THREE.DoubleSide,
@@ -66,6 +66,7 @@ gui
 
 // Mesh
 const mesh = new THREE.Mesh(geometry, material);
+mesh.scale.y = 1 / 1.3;
 scene.add(mesh);
 
 /**
@@ -115,6 +116,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+scene.background = new THREE.Color(0x1b142f);
 
 /**
  * Animate
