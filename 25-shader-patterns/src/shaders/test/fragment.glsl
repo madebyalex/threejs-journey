@@ -1,5 +1,10 @@
 varying vec2 vUv;
 
+float random(vec2 st)
+{
+    return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+}
+
 void main()
 {
     // gl_FragColor = vec4(vUv, 1.0, 1.0); // Blue - Cyan - Purple
@@ -120,13 +125,24 @@ void main()
     // Pattern 21
     // float strength = floor(vUv.x * 10.0) / 10.0; // Stepped gradient
 
-    // Pattern 21-2
+    // Pattern 22
     // float strength = floor(vUv.x * 10.0) / 10.0;
     // strength *= floor(vUv.y * 10.0) / 10.0; // Stepped gradient with a grid
 
-    // Pattern 21-3
-    float strength = floor(vUv.x * 10.0) / 10.0;
-    strength += floor(vUv.y * 10.0) / 10.0; // Angled stepped gradient with a grid
+    // Pattern 22-2
+    // float strength = floor(vUv.x * 10.0) / 10.0;
+    // strength += floor(vUv.y * 10.0) / 10.0; // Angled stepped gradient with a grid
+
+    // Pattern 23
+    // float strength = random(vUv); // Random noise
+
+    // Pattern 24
+    // vec2 gridUv = vec2(floor(vUv.x * 10.0) / 10.0, floor(vUv.y * 10.0) / 10.0);
+    // float strength = random(gridUv); // Pixelated noise
+
+    // Pattern 25
+    vec2 gridUv = vec2(floor(vUv.x * 10.0) / 10.0, floor(vUv.y * 10.0) / 10.0);
+    float strength = random(gridUv); // Pixelated noise
 
     gl_FragColor = vec4(strength, strength, strength, 1.0);
 }
