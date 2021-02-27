@@ -141,8 +141,21 @@ void main()
     // float strength = random(gridUv); // Pixelated noise
 
     // Pattern 25
-    vec2 gridUv = vec2(floor(vUv.x * 10.0) / 10.0, floor(vUv.y * 10.0) / 10.0);
-    float strength = random(gridUv); // Pixelated noise
+    // vec2 gridUv = vec2(floor(vUv.x * 10.0) / 10.0, floor(vUv.y * 10.0 + vUv.x * 5.0) / 10.0);
+    // float strength = random(gridUv); // Skewed pixelated noise
+
+    // Pattern 26
+    // float strength = length(vUv); // Dark radial gradient at the bottom left corner
+
+    // Pattern 26-2
+    // float strength = 1.0 - length(vUv); // Light radial gradient at the bottom left corner
+
+    // Pattern 27
+    // float strength = length(vUv - 0.5); // Dark radial gradient at the center, v1
+    // float strength = distance(vUv, vec2(0.5)); // Dark radial gradient at the center, v2
+
+    // Pattern 28
+    float strength = 1.0 - distance(vUv, vec2(0.5)); // Ligth radial gradient at the center
 
     gl_FragColor = vec4(strength, strength, strength, 1.0);
 }
