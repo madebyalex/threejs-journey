@@ -185,15 +185,27 @@ void main()
     // float strength = lightX * lightY; // Centered bright star
 
     // Pattern 32
-    vec2 rotatedUv = rotate(vUv, PI * 0.25, vec2(0.5));
+    // vec2 rotatedUv = rotate(vUv, PI * 0.25, vec2(0.5));
 
-    vec2 lightUvX = vec2(rotatedUv.x * 0.1 + 0.45, rotatedUv.y * 0.5 + 0.25);
-    float lightX = 0.015 /  distance(lightUvX, vec2(0.5));
+    // vec2 lightUvX = vec2(rotatedUv.x * 0.1 + 0.45, rotatedUv.y * 0.5 + 0.25);
+    // float lightX = 0.015 /  distance(lightUvX, vec2(0.5));
 
-    vec2 lightUvY = vec2(rotatedUv.y * 0.1 + 0.45, rotatedUv.x * 0.5 + 0.25);
-    float lightY = 0.015 /  distance(lightUvY, vec2(0.5));
+    // vec2 lightUvY = vec2(rotatedUv.y * 0.1 + 0.45, rotatedUv.x * 0.5 + 0.25);
+    // float lightY = 0.015 /  distance(lightUvY, vec2(0.5));
 
-    float strength = lightX * lightY; // Centered bright star
+    // float strength = lightX * lightY; // Centered bright star
+
+    // Pattern 33
+    // float strength = step(0.25, distance(vUv, vec2(0.5))); // Sharp circle at the center
+
+    // Pattern 34
+    // float strength = abs(distance(vUv, vec2(0.5)) - 0.25); // Blurred donut
+
+    // Patter 34-2
+    // float strength = step(0.12, abs(distance(vUv, vec2(0.5)) - 0.25)); // Sharp donut
+
+    // Patter 35
+    float strength = step(0.01, abs(distance(vUv, vec2(0.5)) - 0.25)); // Thin circle
 
     gl_FragColor = vec4(strength, strength, strength, 1.0);
 }
