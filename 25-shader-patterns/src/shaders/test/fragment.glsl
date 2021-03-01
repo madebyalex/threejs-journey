@@ -225,11 +225,74 @@ void main()
     // float strength = 1.0 - step(0.01, abs(distance(wavedUv, vec2(0.5)) - 0.25)); // Distorted silhouette with particles
 
     // Pattern 39
-    vec2 wavedUv = vec2(
-        vUv.x + sin(vUv.y * 100.0) * 0.1, 
-        vUv.y + sin(vUv.x * 100.0) * 0.1
-    );
-    float strength = 1.0 - step(0.01, abs(distance(wavedUv, vec2(0.5)) - 0.25)); // Distorted silhouette with particles
+    // vec2 wavedUv = vec2(
+    //     vUv.x + sin(vUv.y * 100.0) * 0.1, 
+    //     vUv.y + sin(vUv.x * 100.0) * 0.1
+    // );
+    // float strength = 1.0 - step(0.01, abs(distance(wavedUv, vec2(0.5)) - 0.25)); // Distorted, more dense silhouette with particles
+
+    // Pattern 40
+    // float angle = atan(vUv.x, vUv.y);
+    // float strength = angle; // Angle gradient, bottom left to top right
+
+    // Pattern 41
+    // float angle = atan(vUv.x - 0.5, vUv.y - 0.5);
+    // float strength = angle; // Angle gradient with shifting to the center
+
+    // Pattern 42
+    // float angle = atan(vUv.x - 0.5, (vUv.y - 0.5));
+    // angle /= PI * 2.0;
+    // angle += 0.5;
+    // float strength = angle; // Full-circle, angle gradient from the center
+
+    // Pattern 43
+    // float angle = atan(vUv.x - 0.5, (vUv.y - 0.5));
+    // angle /= PI * 2.0;
+    // angle += 0.5;
+    // angle *= 20.0;
+    // angle = mod(angle, 1.0);
+    // float strength = angle; // Light burst made with angle gradients
+
+    // Pattern 44
+    // float angle = atan(vUv.x - 0.5, (vUv.y - 0.5));
+    // angle /= PI * 2.0;
+    // angle += 0.5;
+    // angle = sin(angle * 100.0);
+    // float strength = angle; // Light burst made with soft gradients
+
+    // Pattern 44-2
+    // float angle = atan(vUv.x - 0.5, (vUv.y - 0.5));
+    // angle /= PI * 2.0;
+    // angle += 0.5;
+    // angle = step(0.1, sin(angle * 100.0));
+    // float strength = angle; // Light burst, sharp
+
+    // Pattern 44-3
+    // float angle = atan(vUv.x - 0.5, (vUv.y - 0.5));
+    // angle /= PI * 2.0;
+    // angle += 0.5;
+    // float sinusoid = step(0.1, sin(angle * 100.0));
+
+    // float radius = 0.25 / sinusoid;
+    // float strength = 1.0 - step(0.01, abs(distance(vUv, vec2(0.5)) - radius)); // Thin dashed white circle on black
+
+    // Pattern 44-4
+    // float angle = atan(vUv.x - 0.5, (vUv.y - 0.5));
+    // angle /= PI * 2.0;
+    // angle += 0.5;
+    // float sinusoid = sin(angle * 100.0);
+
+    // float radius = 0.25 / sinusoid * 0.1;
+    // float strength = 1.0 - step(0.01, abs(distance(vUv, vec2(0.5)) - radius)); // Bright stars-like burst from the center
+
+    // Pattern 45
+    // float angle = atan(vUv.x - 0.5, (vUv.y - 0.5));
+    // angle /= PI * 2.0;
+    // angle += 0.5;
+    // float sinusoid = sin(angle * 100.0);
+
+    // float radius = 0.25 + sinusoid * 0.02;
+    // float strength = 1.0 - step(0.01, abs(distance(vUv, vec2(0.5)) - radius)); // Wavy, distorted circle on black
 
 
     gl_FragColor = vec4(strength, strength, strength, 1.0);
