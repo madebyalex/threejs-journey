@@ -201,11 +201,36 @@ void main()
     // Pattern 34
     // float strength = abs(distance(vUv, vec2(0.5)) - 0.25); // Blurred donut
 
-    // Patter 34-2
+    // Pattern 34-2
     // float strength = step(0.12, abs(distance(vUv, vec2(0.5)) - 0.25)); // Sharp donut
 
-    // Patter 35
-    float strength = step(0.01, abs(distance(vUv, vec2(0.5)) - 0.25)); // Thin circle
+    // Pattern 35
+    // float strength = step(0.01, abs(distance(vUv, vec2(0.5)) - 0.25)); //  // Thin black circle on white
+
+    // Pattern 36
+    // float strength = 1.0 - step(0.01, abs(distance(vUv, vec2(0.5)) - 0.25)); // Thin white circle on black
+
+    // Pattern 37
+    // vec2 wavedUv = vec2(
+    //     vUv.x, 
+    //     vUv.y + sin(vUv.x * 30.0) * 0.1
+    // );
+    // float strength = 1.0 - step(0.01, abs(distance(wavedUv, vec2(0.5)) - 0.25)); // Distorted, wavy circle
+
+    // Pattern 38
+    // vec2 wavedUv = vec2(
+    //     vUv.x + sin(vUv.y * 30.0) * 0.1, 
+    //     vUv.y + sin(vUv.x * 30.0) * 0.1
+    // );
+    // float strength = 1.0 - step(0.01, abs(distance(wavedUv, vec2(0.5)) - 0.25)); // Distorted silhouette with particles
+
+    // Pattern 39
+    vec2 wavedUv = vec2(
+        vUv.x + sin(vUv.y * 100.0) * 0.1, 
+        vUv.y + sin(vUv.x * 100.0) * 0.1
+    );
+    float strength = 1.0 - step(0.01, abs(distance(wavedUv, vec2(0.5)) - 0.25)); // Distorted silhouette with particles
+
 
     gl_FragColor = vec4(strength, strength, strength, 1.0);
 }
