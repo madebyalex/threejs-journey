@@ -355,8 +355,28 @@ void main()
     // float strength = sin(cnoise(vUv * 10.0 + uTime) * 20.0 + sin(uTime * 10.0)); // Double border perlin noise, animated
 
     // Pattern 49
-    float strength = step(0.9, sin(cnoise(vUv * 10.0) * 20.0)); // Double border perlin noise, sharp
+    // float strength = step(0.9, sin(cnoise(vUv * 10.0) * 20.0)); // Double border perlin noise, sharp
 
+    // Pattern 49-2 – Colored version
+    // float strength = step(0.9, sin(cnoise(vUv * 10.0) * 20.0));
 
-    gl_FragColor = vec4(strength, strength, strength, 1.0);
+    // vec3 blackColor = vec3(0.0);
+    // vec3 uvColor = vec3(vUv, 1.0);
+    // vec3 mixedColor = mix(blackColor, uvColor, strength);
+    // gl_FragColor = vec4(mixedColor, 1.0);
+
+    // Pattern 49-3 – Colored version, animated
+    float strength = step(0.9, sin(cnoise(vUv * 10.0 + uTime) * 20.0 + sin(uTime * 10.0))); // Double border perlin noise, animated
+
+    strength = clamp(strength, 0.0, 1.0);
+
+    vec3 blackColor = vec3(0.0);
+    vec3 uvColor = vec3(vUv, 0.5);
+    vec3 mixedColor = mix(blackColor, uvColor, strength);
+    gl_FragColor = vec4(mixedColor, 1.0);
+
+    
+
+    // Black & white version
+    // gl_FragColor = vec4(strength, strength, strength, 1.0);
 }
