@@ -16,7 +16,7 @@ const canvas = document.querySelector('canvas.webgl');
 
 // Scene
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x191429);
+// scene.background = new THREE.Color(0x191429);
 
 /**
  * Test mesh
@@ -30,6 +30,9 @@ const material = new THREE.ShaderMaterial({
   vertexShader: testVertexShader,
   fragmentShader: testFragmentShader,
   side: THREE.DoubleSide,
+  uniforms: {
+    uTime: { value: 0 },
+  },
 });
 
 // Mesh
@@ -87,7 +90,15 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 /**
  * Animate
  */
+
+const clock = new THREE.Clock();
+
 const tick = () => {
+  const elapsedTime = clock.getElapsedTime();
+
+  // Update material
+  material.uniforms.uTime.value = elapsedTime;
+
   // Update controls
   controls.update();
 
