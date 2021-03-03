@@ -7,7 +7,7 @@ varying float vElevation;
 
 void main() {
   float mixStrength = (vElevation + uColorOffset) * uColorMultiplier;
-  vec3 mixedColor = mix(uDepthColor, uSurfaceColor * 3.0, mixStrength);
+  vec3 mixedColor = mix(uDepthColor, uSurfaceColor, mixStrength);
 
   gl_FragColor = vec4(mixedColor, vElevation);
 }

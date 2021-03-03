@@ -17,12 +17,20 @@ const canvas = document.querySelector('canvas.webgl');
 
 // Scene
 const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x191429);
+
+// Fog
+function addFog() {
+  scene.fog = new THREE.Fog(0x191429, 0.015, 20);
+}
+
+addFog();
 
 /**
  * Water
  */
 // Geometry
-const waterGeometry = new THREE.PlaneGeometry(2, 2, 128, 128);
+const waterGeometry = new THREE.PlaneGeometry(5, 5, 512, 512);
 
 // Settings
 // debugObject.uBigWavesElevation = 0.753;
@@ -32,16 +40,22 @@ const waterGeometry = new THREE.PlaneGeometry(2, 2, 128, 128);
 // debugObject.depthColor = '#f554c1';
 // debugObject.surfaceColor = '#f25ab1';
 
-debugObject.uBigWavesElevation = 0.2;
+debugObject.uBigWavesElevation = 0.06;
 debugObject.uBigWavesFrequencyX = 4;
 debugObject.uBigWavesFrequencyY = 1.5;
-debugObject.uBigWavesSpeed = 0.75;
+debugObject.uBigWavesSpeed = 1;
+
+debugObject.uSmallWavesElevation = 0.15;
+debugObject.uSmallWavesFrequency = 3;
+debugObject.uSmallWavesSpeed = 0.2;
+debugObject.uSmallWavesIterations = 3;
+
 // debugObject.depthColor = '#3a1bd7';
 // debugObject.surfaceColor = '#ed51ed';
 debugObject.depthColor = '#186691';
 debugObject.surfaceColor = '#9bd8ff';
-debugObject.colorOffset = 0.122;
-debugObject.colorMultiplier = 0.756;
+debugObject.colorOffset = 0.08;
+debugObject.colorMultiplier = 7.8;
 
 // Material
 const waterMaterial = new THREE.ShaderMaterial({
@@ -59,6 +73,11 @@ const waterMaterial = new THREE.ShaderMaterial({
     },
     uBigWavesSpeed: { value: debugObject.uBigWavesSpeed },
 
+    uSmallWavesElevation: { value: debugObject.uSmallWavesElevation },
+    uSmallWavesFrequency: { value: debugObject.uSmallWavesFrequency },
+    uSmallWavesSpeed: { value: debugObject.uSmallWavesSpeed },
+    uSmallWavesIterations: { value: debugObject.uSmallWavesIterations },
+
     uDepthColor: { value: new THREE.Color(debugObject.depthColor) },
     uSurfaceColor: { value: new THREE.Color(debugObject.surfaceColor) },
     uColorOffset: { value: debugObject.colorOffset },
@@ -67,6 +86,8 @@ const waterMaterial = new THREE.ShaderMaterial({
 });
 
 // Debug
+
+// Big waves
 gui
   .add(waterMaterial.uniforms.uBigWavesElevation, 'value')
   .min(0)
@@ -91,6 +112,34 @@ gui
   .max(3)
   .step(0.001)
   .name('uBigWavesSpeed');
+
+// Small waves
+gui
+  .add(waterMaterial.uniforms.uSmallWavesElevation, 'value')
+  .min(0)
+  .max(1)
+  .step(0.001)
+  .name('uSmallWavesElevation');
+gui
+  .add(waterMaterial.uniforms.uSmallWavesFrequency, 'value')
+  .min(0)
+  .max(30)
+  .step(0.01)
+  .name('uSmallWavesFrequency');
+gui
+  .add(waterMaterial.uniforms.uSmallWavesSpeed, 'value')
+  .min(0)
+  .max(4)
+  .step(0.01)
+  .name('uSmallWavesSpeed');
+gui
+  .add(waterMaterial.uniforms.uSmallWavesIterations, 'value')
+  .min(0)
+  .max(4)
+  .step(1)
+  .name('uSmallWavesIterations');
+
+// Colors
 gui
   .addColor(debugObject, 'depthColor')
   .onChange((color) => {
