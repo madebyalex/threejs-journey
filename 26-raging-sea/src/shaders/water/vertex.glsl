@@ -8,6 +8,8 @@ uniform float uSmallWavesFrequency;
 uniform float uSmallWavesSpeed;
 uniform float uSmallWavesIterations;
 
+// uniform vec3 fogC;
+
 varying float vElevation;
 
 // Classic Perlin 3D Noise 
@@ -115,6 +117,10 @@ void main() {
   }
                     
   modelPosition.y += elevation;
+
+  // Fog
+  // float depth = gl_FragCoord.z / gl_FragCoord.w;
+  // float fogFactor = smoothstep( fogNear, fogFar, depth );
 
   vec4 viewPosition = viewMatrix * modelPosition;
   vec4 projectedPosition = projectionMatrix * viewPosition;

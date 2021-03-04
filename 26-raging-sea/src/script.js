@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import * as dat from 'dat.gui';
 import waterVertexShader from './shaders/water/vertex.glsl';
 import waterFragmentShader from './shaders/water/fragment.glsl';
+import { DoubleSide } from 'three';
 
 /**
  * Base
@@ -20,17 +21,14 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x191429);
 
 // Fog
-function addFog() {
-  scene.fog = new THREE.Fog(0x191429, 0.015, 20);
-}
-
-addFog();
+scene.fog = new THREE.Fog(0x191429, 0.015, 3);
 
 /**
  * Water
  */
 // Geometry
-const waterGeometry = new THREE.PlaneGeometry(5, 5, 512, 512);
+// const waterGeometry = new THREE.PlaneGeometry(10, 10, 1024, 1024);
+const waterGeometry = new THREE.SphereGeometry(1, 1024, 1024);
 
 // Settings
 // debugObject.uBigWavesElevation = 0.753;
@@ -40,27 +38,32 @@ const waterGeometry = new THREE.PlaneGeometry(5, 5, 512, 512);
 // debugObject.depthColor = '#f554c1';
 // debugObject.surfaceColor = '#f25ab1';
 
-debugObject.uBigWavesElevation = 0.06;
-debugObject.uBigWavesFrequencyX = 4;
-debugObject.uBigWavesFrequencyY = 1.5;
-debugObject.uBigWavesSpeed = 1;
+debugObject.uBigWavesElevation = 0.037;
+debugObject.uBigWavesFrequencyX = 6.453;
+debugObject.uBigWavesFrequencyY = 2.988;
+debugObject.uBigWavesSpeed = 1.104;
 
-debugObject.uSmallWavesElevation = 0.15;
-debugObject.uSmallWavesFrequency = 3;
-debugObject.uSmallWavesSpeed = 0.2;
+debugObject.uSmallWavesElevation = 0.137;
+debugObject.uSmallWavesFrequency = 10.35;
+debugObject.uSmallWavesSpeed = 0.21;
 debugObject.uSmallWavesIterations = 3;
 
 // debugObject.depthColor = '#3a1bd7';
 // debugObject.surfaceColor = '#ed51ed';
-debugObject.depthColor = '#186691';
-debugObject.surfaceColor = '#9bd8ff';
+// debugObject.depthColor = '#186691';
+// debugObject.surfaceColor = '#9bd8ff';
+debugObject.depthColor = '#cd7008';
+debugObject.surfaceColor = '#edff9b';
 debugObject.colorOffset = 0.08;
-debugObject.colorMultiplier = 7.8;
+debugObject.colorMultiplier = 7.3;
 
 // Material
 const waterMaterial = new THREE.ShaderMaterial({
   vertexShader: waterVertexShader,
   fragmentShader: waterFragmentShader,
+  //   blending: THREE.AdditiveBlending,
+  //   transparent: true,
+  //   fog: true,
   uniforms: {
     uTime: { value: 0 },
 
@@ -82,6 +85,31 @@ const waterMaterial = new THREE.ShaderMaterial({
     uSurfaceColor: { value: new THREE.Color(debugObject.surfaceColor) },
     uColorOffset: { value: debugObject.colorOffset },
     uColorMultiplier: { value: debugObject.colorMultiplier },
+
+    // fogC: {
+    //   type: 'c',
+    //   value: new THREE.Color(0x000000),
+    // },
+    // viewVector: {
+    //   type: 'v3',
+    //   value: {
+    //     x: 0,
+    //     y: 0,
+    //     z: 400,
+    //   },
+    // },
+    // fogColor: {
+    //   type: 'c',
+    //   value: 0x000000,
+    // },
+    // fogFar: {
+    //   type: 'f',
+    //   value: 3000,
+    // },
+    // fogNear: {
+    //   type: 'f',
+    //   value: 0.015,
+    // },
   },
 });
 
@@ -171,6 +199,69 @@ water.rotation.x = -Math.PI * 0.5;
 scene.add(water);
 
 /**
+ * Lights
+ */
+const directionalLight = new THREE.DirectionalLight(
+  '#FFFFFF',
+  debugObject.lightIntensity
+);
+directionalLight.position.set(0.25, 3, -2.25);
+directionalLight.castShadow = true;
+directionalLight.shadow.camera.far = 15;
+directionalLight.shadow.mapSize.set(1024 * 2, 1024 * 2);
+directionalLight.shadow.normalBias = 0.05;
+scene.add(directionalLight);
+
+// const directionalLightHelper = new THREE.CameraHelper(
+//   directionalLight.shadow.camera
+// );
+// scene.add(directionalLightHelper);
+
+gui
+  .add(directionalLight, 'intensity')
+  .min(0)
+  .max(10)
+  .step(0.001)
+  .name('lightIntensity');
+
+gui
+  .add(directionalLight.position, 'x')
+  .min(-5)
+  .max(5)
+  .step(0.001)
+  .name('lightX');
+gui
+  .add(directionalLight.position, 'y')
+  .min(-5)
+  .max(5)
+  .step(0.001)
+  .name('lightY');
+gui
+  .add(directionalLight.position, 'z')
+  .min(-5)
+  .max(5)
+  .step(0.001)
+  .name('lightZ');
+
+// Hemisphere
+const hemisphereLight = new THREE.HemisphereLight(0xffde3e, 0x311304, 0.3);
+scene.add(hemisphereLight);
+
+// Test plane
+
+const testPlaneGeometry = new THREE.BoxGeometry(0.5, 0.08, 20, 4, 4, 40);
+const testPlaneMaterial = new THREE.MeshStandardMaterial({
+  color: 0xff00ff,
+  side: DoubleSide,
+  wireframe: true,
+});
+const testPlane = new THREE.Mesh(testPlaneGeometry, testPlaneMaterial);
+testPlane.position.set(0, 0.5, 0);
+// testPlane.rotation.set(30, 20, 0);
+testPlane.rotation.x = Math.PI;
+scene.add(testPlane);
+
+/**
  * Sizes
  */
 const sizes = {
@@ -202,7 +293,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(1, 1, 1);
+camera.position.set(1, 0.5, 1);
 scene.add(camera);
 
 // Controls
