@@ -104,6 +104,10 @@ window.addEventListener('resize', () => {
   // Update renderer
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  // Update effect composer
+  effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  effectComposer.setSize(sizes.width, sizes.height);
 });
 
 /**
@@ -142,10 +146,19 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 /**
  * Post processing
  */
-const effectComposer = new EffectComposer(renderer);
-effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-effectComposer.setSize(sizes.width, sizes.height);
 
+// Render target
+const renderTarget = new THREE.WebGLRenderTarget(800, 600, {
+  minFilter: THREE.LinearFilter,
+  maxFilter: THREE.LinearFilter,
+  format: THREE.RGBAFormat,
+  encoding: THREE.sRGBEncoding,
+});
+
+// Composer
+const effectComposer = new EffectComposer(renderer, renderTarget);
+
+// Passes
 const renderPass = new RenderPass(scene, camera);
 effectComposer.addPass(renderPass);
 
@@ -160,14 +173,13 @@ groupDotScreenPass.add(dotScreenPass, 'enabled');
 
 // Glitch pass
 const glitchPass = new GlitchPass();
-// glitchPass.goWild = true;
-// glitchPass.needsSwap = true;
 glitchPass.enabled = false;
 effectComposer.addPass(glitchPass);
 
 const groupGlitchPass = gui.addFolder('GlitchPass');
 groupGlitchPass.open();
 groupGlitchPass.add(glitchPass, 'enabled');
+groupGlitchPass.add(glitchPass, 'goWild');
 
 // RGBShift pass
 const rgbShiftPass = new ShaderPass(RGBShiftShader);
