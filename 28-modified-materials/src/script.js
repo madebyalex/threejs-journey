@@ -2,6 +2,7 @@ import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import * as dat from 'dat.gui';
 
 /**
@@ -9,6 +10,12 @@ import * as dat from 'dat.gui';
  */
 // Debug
 const gui = new dat.GUI();
+
+const debugObject = {
+  envMapIntensity: 2.04,
+  lightIntensity: 1.28,
+  toneMappingExposure: 1.822,
+};
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl');
@@ -22,6 +29,10 @@ const scene = new THREE.Scene();
 const textureLoader = new THREE.TextureLoader();
 const gltfLoader = new GLTFLoader();
 const cubeTextureLoader = new THREE.CubeTextureLoader();
+
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('/draco/');
+gltfLoader.setDRACOLoader(dracoLoader);
 
 /**
  * Update all materials
@@ -150,15 +161,38 @@ depthMaterial.onBeforeCompile = (shader) => {
 /**
  * Models
  */
-gltfLoader.load('/models/LeePerrySmith/LeePerrySmith.glb', (gltf) => {
-  // Model
-  const mesh = gltf.scene.children[0];
-  mesh.rotation.y = Math.PI * 0.5;
-  mesh.material = material;
-  mesh.customDepthMaterial = depthMaterial;
-  scene.add(mesh);
+// gltfLoader.load('/models/LeePerrySmith/LeePerrySmith.glb', (gltf) => {
+//   // Model
+//   const mesh = gltf.scene.children[0];
+//   mesh.rotation.y = Math.PI * 0.5;
+//   mesh.material = material;
+//   mesh.customDepthMaterial = depthMaterial;
+//   scene.add(mesh);
 
-  // Update materials
+//   // Update materials
+//   updateAllMaterials();
+// });
+
+let model = null;
+
+// gltfLoader.load('/models/FlightHelmet/glTF/FlightHelmet.gltf', (gltf) => {
+// gltfLoader.load('/models/hamburger.glb', (gltf) => {
+gltfLoader.load('/models/hamburger-draco3.glb', (gltf) => {
+  // console.log(gltf);
+  // gltf.scene.scale.set(7, 7, 7);
+  gltf.scene.scale.set(0.25, 0.25, 0.25);
+  gltf.scene.position.set(0, -2.2, 0);
+  gltf.scene.rotation.y = Math.PI * 0.5;
+  scene.add(gltf.scene);
+  model = gltf.scene;
+
+  gui
+    .add(gltf.scene.rotation, 'y')
+    .min(-Math.PI)
+    .max(Math.PI)
+    .step(0.001)
+    .name('rotation');
+
   updateAllMaterials();
 });
 
@@ -166,25 +200,74 @@ gltfLoader.load('/models/LeePerrySmith/LeePerrySmith.glb', (gltf) => {
  * Plane
  */
 
-const plane = new THREE.Mesh(
-  new THREE.PlaneGeometry(15, 15, 15),
-  new THREE.MeshStandardMaterial()
-);
-plane.rotation.y = Math.PI;
-plane.position.y = -5;
-plane.position.z = 5;
-scene.add(plane);
+// const plane = new THREE.Mesh(
+//   new THREE.PlaneGeometry(15, 15, 15),
+//   new THREE.MeshStandardMaterial()
+// );
+// plane.rotation.y = Math.PI;
+// plane.position.y = -5;
+// plane.position.z = 5;
+// scene.add(plane);
 
 /**
  * Lights
  */
-const directionalLight = new THREE.DirectionalLight('#ffffff', 3);
+// const directionalLight = new THREE.DirectionalLight('#ffffff', 3);
+// directionalLight.castShadow = true;
+// directionalLight.shadow.mapSize.set(1024, 1024);
+// directionalLight.shadow.camera.far = 15;
+// directionalLight.shadow.normalBias = 0.05;
+// directionalLight.position.set(0.25, 2, -2.25);
+// scene.add(directionalLight);
+
+/**
+ * Lights
+ */
+const directionalLight = new THREE.DirectionalLight(
+  '#FFFFFF',
+  debugObject.lightIntensity
+);
+directionalLight.position.set(0.25, 3, -2.25);
 directionalLight.castShadow = true;
-directionalLight.shadow.mapSize.set(1024, 1024);
 directionalLight.shadow.camera.far = 15;
+directionalLight.shadow.mapSize.set(1024 * 2, 1024 * 2);
 directionalLight.shadow.normalBias = 0.05;
-directionalLight.position.set(0.25, 2, -2.25);
 scene.add(directionalLight);
+
+// const directionalLightHelper = new THREE.CameraHelper(
+//   directionalLight.shadow.camera
+// );
+// scene.add(directionalLightHelper);
+
+gui
+  .add(directionalLight, 'intensity')
+  .min(0)
+  .max(10)
+  .step(0.001)
+  .name('lightIntensity');
+
+gui
+  .add(directionalLight.position, 'x')
+  .min(-5)
+  .max(5)
+  .step(0.001)
+  .name('lightX');
+gui
+  .add(directionalLight.position, 'y')
+  .min(-5)
+  .max(5)
+  .step(0.001)
+  .name('lightY');
+gui
+  .add(directionalLight.position, 'z')
+  .min(-5)
+  .max(5)
+  .step(0.001)
+  .name('lightZ');
+
+// Hemisphere
+const hemisphereLight = new THREE.HemisphereLight(0xffde3e, 0x311304, 0.3);
+scene.add(hemisphereLight);
 
 /**
  * Sizes
