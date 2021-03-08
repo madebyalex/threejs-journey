@@ -4,13 +4,17 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { DotScreenPass } from 'three/examples/jsm/postprocessing/DotScreenPass.js';
+import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { RGBShiftShader } from 'three/examples/jsm/shaders/RGBShiftShader.js';
 import * as dat from 'dat.gui';
 
 /**
  * Base
  */
 // Debug
-const gui = new dat.GUI();
+const gui = new dat.GUI({ width: 320 });
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl');
@@ -144,6 +148,54 @@ effectComposer.setSize(sizes.width, sizes.height);
 
 const renderPass = new RenderPass(scene, camera);
 effectComposer.addPass(renderPass);
+
+// Dot screen pass
+const dotScreenPass = new DotScreenPass();
+dotScreenPass.enabled = false;
+effectComposer.addPass(dotScreenPass);
+
+const groupDotScreenPass = gui.addFolder('DotScreenPass');
+groupDotScreenPass.open();
+groupDotScreenPass.add(dotScreenPass, 'enabled');
+
+// Glitch pass
+const glitchPass = new GlitchPass();
+// glitchPass.goWild = true;
+// glitchPass.needsSwap = true;
+glitchPass.enabled = false;
+effectComposer.addPass(glitchPass);
+
+const groupGlitchPass = gui.addFolder('GlitchPass');
+groupGlitchPass.open();
+groupGlitchPass.add(glitchPass, 'enabled');
+
+// RGBShift pass
+const rgbShiftPass = new ShaderPass(RGBShiftShader);
+rgbShiftPass.enabled = false;
+console.log(rgbShiftPass);
+effectComposer.addPass(rgbShiftPass);
+
+const groupRGBShiftPass = gui.addFolder('RGBShiftPass');
+groupRGBShiftPass.open();
+
+groupRGBShiftPass
+  .add(rgbShiftPass.uniforms.amount, 'value')
+  .min(0)
+  .max(0.05)
+  .step(0.001)
+  .name('Amount');
+
+groupRGBShiftPass.add(rgbShiftPass, 'enabled');
+
+// groupRGBShiftPass
+//   .add(rgbShiftPass.uniforms.angle, 'value')
+//   .min(0)
+//   .max(100)
+//   .step(0.1)
+//   .name('RGBShiftPass angle')
+//   .onFinishChange((angle) => {
+//     rgbShiftPass.uniforms.angle = angle;
+//   });
 
 /**
  * Animate
