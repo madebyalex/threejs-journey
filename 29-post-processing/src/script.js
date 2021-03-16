@@ -227,6 +227,7 @@ unrealBloomPass.threshold = 0.6;
 effectComposer.addPass(unrealBloomPass);
 
 const groupUnrealBloomPass = gui.addFolder('UnrealBloomPass');
+unrealBloomPass.enabled = false;
 groupUnrealBloomPass.open();
 
 groupUnrealBloomPass
@@ -251,6 +252,64 @@ groupUnrealBloomPass
   .name('Threshold');
 
 groupUnrealBloomPass.add(unrealBloomPass, 'enabled');
+
+// Tint pass
+const TintShader = {
+  uniforms: {
+    tDiffuse: { value: null },
+    uTint: { value: null },
+  },
+  vertexShader: `
+    varying vec2 vUv;
+    
+    void main() {
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+      vUv = uv;
+    }
+  `,
+  fragmentShader: `
+    uniform sampler2D tDiffuse;
+    uniform vec3 uTint;
+
+    varying vec2 vUv;
+
+    void main() {
+      vec4 color = texture2D(tDiffuse, vUv);
+      color.rgb += uTint;
+      gl_FragColor = color;
+    }
+  `,
+};
+
+const tintPass = new ShaderPass(TintShader);
+tintPass.material.uniforms.uTint.value = new THREE.Vector3();
+effectComposer.addPass(tintPass);
+
+const groupTintPass = gui.addFolder('tintPass');
+tintPass.enabled = false;
+groupTintPass.open();
+
+groupTintPass
+  .add(tintPass.material.uniforms.uTint.value, 'x')
+  .min(-1)
+  .max(1)
+  .step(0.001)
+  .name('Red');
+groupTintPass
+  .add(tintPass.material.uniforms.uTint.value, 'y')
+  .min(-1)
+  .max(1)
+  .step(0.001)
+  .name('Green');
+groupTintPass
+  .add(tintPass.material.uniforms.uTint.value, 'z')
+  .min(-1)
+  .max(1)
+  .step(0.001)
+  .name('Blue');
+
+groupTintPass.add(tintPass, 'enabled');
 
 if (renderer.getPixelRatio() === 1 && !renderer.capabilities.isWebGL2) {
   const smaaPass = new SMAAPass();
