@@ -9,6 +9,7 @@ import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { RGBShiftShader } from 'three/examples/jsm/shaders/RGBShiftShader.js';
 import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import * as dat from 'dat.gui';
 
 /**
@@ -153,10 +154,10 @@ let RenderTargetClass = null;
 
 if (renderer.getPixelRatio() === 1 && renderer.capabilities.isWebGL2) {
   RenderTargetClass = THREE.WebGLMultisampleRenderTarget;
-  console.log('WebGL2 is here, yay! Using WebGLMultisampleRenderTarget');
+  console.log('Using WebGLMultisampleRenderTarget');
 } else {
   RenderTargetClass = THREE.WebGLRenderTarget;
-  console.log('No WebGL2 :( Using WebGLRenderTarget');
+  console.log('Using WebGLRenderTarget');
 }
 
 const renderTarget = new RenderTargetClass(800, 600, {
@@ -218,6 +219,38 @@ groupRGBShiftPass.add(rgbShiftPass, 'enabled');
 //   .onFinishChange((angle) => {
 //     rgbShiftPass.uniforms.angle = angle;
 //   });
+
+const unrealBloomPass = new UnrealBloomPass();
+unrealBloomPass.strength = 0.3;
+unrealBloomPass.radius = 1;
+unrealBloomPass.threshold = 0.6;
+effectComposer.addPass(unrealBloomPass);
+
+const groupUnrealBloomPass = gui.addFolder('UnrealBloomPass');
+groupUnrealBloomPass.open();
+
+groupUnrealBloomPass
+  .add(unrealBloomPass, 'strength')
+  .min(0)
+  .max(2)
+  .step(0.001)
+  .name('Strength');
+
+groupUnrealBloomPass
+  .add(unrealBloomPass, 'radius')
+  .min(0)
+  .max(2)
+  .step(0.001)
+  .name('Radius');
+
+groupUnrealBloomPass
+  .add(unrealBloomPass, 'threshold')
+  .min(0)
+  .max(1)
+  .step(0.001)
+  .name('Threshold');
+
+groupUnrealBloomPass.add(unrealBloomPass, 'enabled');
 
 if (renderer.getPixelRatio() === 1 && !renderer.capabilities.isWebGL2) {
   const smaaPass = new SMAAPass();
