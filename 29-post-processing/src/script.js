@@ -8,6 +8,7 @@ import { DotScreenPass } from 'three/examples/jsm/postprocessing/DotScreenPass.j
 import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { RGBShiftShader } from 'three/examples/jsm/shaders/RGBShiftShader.js';
+import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
 import * as dat from 'dat.gui';
 
 /**
@@ -208,6 +209,14 @@ groupRGBShiftPass.add(rgbShiftPass, 'enabled');
 //   .onFinishChange((angle) => {
 //     rgbShiftPass.uniforms.angle = angle;
 //   });
+
+const smaaPass = new SMAAPass();
+smaaPass.enabled = false;
+effectComposer.addPass(smaaPass);
+
+const groupSMAAPass = gui.addFolder('SMAAPass');
+groupSMAAPass.open();
+groupSMAAPass.add(smaaPass, 'enabled');
 
 /**
  * Animate
