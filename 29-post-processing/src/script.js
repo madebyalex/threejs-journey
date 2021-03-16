@@ -149,7 +149,17 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
  */
 
 // Render target
-const renderTarget = new THREE.WebGLRenderTarget(800, 600, {
+let RenderTargetClass = null;
+
+if (renderer.getPixelRatio() === 1 && renderer.capabilities.isWebGL2) {
+  RenderTargetClass = THREE.WebGLMultisampleRenderTarget;
+  console.log('WebGL2 is here, yay! Using WebGLMultisampleRenderTarget');
+} else {
+  RenderTargetClass = THREE.WebGLRenderTarget;
+  console.log('No WebGL2 :( Using WebGLRenderTarget');
+}
+
+const renderTarget = new RenderTargetClass(800, 600, {
   minFilter: THREE.LinearFilter,
   maxFilter: THREE.LinearFilter,
   format: THREE.RGBAFormat,
@@ -185,7 +195,6 @@ groupGlitchPass.add(glitchPass, 'goWild');
 // RGBShift pass
 const rgbShiftPass = new ShaderPass(RGBShiftShader);
 rgbShiftPass.enabled = false;
-console.log(rgbShiftPass);
 effectComposer.addPass(rgbShiftPass);
 
 const groupRGBShiftPass = gui.addFolder('RGBShiftPass');
@@ -210,13 +219,17 @@ groupRGBShiftPass.add(rgbShiftPass, 'enabled');
 //     rgbShiftPass.uniforms.angle = angle;
 //   });
 
-const smaaPass = new SMAAPass();
-smaaPass.enabled = false;
-effectComposer.addPass(smaaPass);
+if (renderer.getPixelRatio() === 1 && !renderer.capabilities.isWebGL2) {
+  const smaaPass = new SMAAPass();
+  smaaPass.enabled = false;
+  effectComposer.addPass(smaaPass);
 
-const groupSMAAPass = gui.addFolder('SMAAPass');
-groupSMAAPass.open();
-groupSMAAPass.add(smaaPass, 'enabled');
+  const groupSMAAPass = gui.addFolder('SMAAPass');
+  groupSMAAPass.open();
+  groupSMAAPass.add(smaaPass, 'enabled');
+
+  console.log('Using SMAA');
+}
 
 /**
  * Animate
