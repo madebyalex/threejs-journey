@@ -303,10 +303,42 @@ groupTintPass
 groupTintPass.add(tintPass, 'enabled');
 
 // Displacement pass
+// const DisplacementShader = {
+//   uniforms: {
+//     tDiffuse: { value: null },
+//     uTime: { value: null },
+//   },
+//   vertexShader: `
+//     varying vec2 vUv;
+
+//     void main() {
+//       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+//       vUv = uv;
+//     }
+//   `,
+//   fragmentShader: `
+//     uniform sampler2D tDiffuse;
+//     uniform float uTime;
+
+//     varying vec2 vUv;
+
+//     void main() {
+//       vec2 newUv = vec2(
+//         vUv.x + sin(vUv.y * 5.0 + uTime) * 0.05,
+//         vUv.y + sin(vUv.x * 10.0 + uTime) * 0.05
+//       );
+//       vec4 color = texture2D(tDiffuse, newUv);
+
+//       gl_FragColor = color;
+//     }
+//   `,
+// };
+
 const DisplacementShader = {
   uniforms: {
     tDiffuse: { value: null },
-    uTime: { value: null },
+    uNormalMap: { value: null },
   },
   vertexShader: `
     varying vec2 vUv;
@@ -319,16 +351,20 @@ const DisplacementShader = {
   `,
   fragmentShader: `
     uniform sampler2D tDiffuse;
-    uniform float uTime;
+    uniform sampler2D uNormalMap;
 
     varying vec2 vUv;
 
     void main() {
-      vec2 newUv = vec2(
-        vUv.x + sin(vUv.y * 5.0 + uTime) * 0.05,
-        vUv.y + sin(vUv.x * 10.0 + uTime) * 0.05
-      );
+      vec3 normalColor = texture2D(uNormalMap, vUv).xyz * 2.0 - 1.0;
+
+      vec2 newUv = vUv + normalColor.xy;
       vec4 color = texture2D(tDiffuse, newUv);
+
+      vec3 lightDirection = normalize(vec3(-1.0, 1.0, 0.0));
+      float lightness = clamp(0.0, dot(normalColor, lightDirection), 1.0);
+
+      color += lightness * 2.0;
 
       gl_FragColor = color;
     }
@@ -336,7 +372,9 @@ const DisplacementShader = {
 };
 
 const displacementPass = new ShaderPass(DisplacementShader);
-displacementPass.material.uniforms.uTime.value = 0;
+displacementPass.material.uniforms.uNormalMap.value = textureLoader.load(
+  'textures/interfaceNormalMap.png'
+);
 effectComposer.addPass(displacementPass);
 
 // SMAA pass
@@ -361,7 +399,7 @@ const tick = () => {
   const elapsedTime = clock.getElapsedTime();
 
   // Update passes
-  displacementPass.material.uniforms.uTime.value = elapsedTime;
+  // displacementPass.material.uniforms.uTime.value = elapsedTime;
 
   // Update controls
   controls.update();
