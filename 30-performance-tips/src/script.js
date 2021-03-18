@@ -175,8 +175,8 @@ tick();
 // directionalLight.shadow.camera.far = 10
 // directionalLight.shadow.mapSize.set(1024, 1024)
 
-// const cameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera)
-// scene.add(cameraHelper)
+const cameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
+scene.add(cameraHelper);
 
 // // Tip 11
 // cube.castShadow = true
