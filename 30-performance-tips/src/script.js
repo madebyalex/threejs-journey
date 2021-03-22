@@ -196,47 +196,43 @@ floor.receiveShadow = true;
 // renderer.shadowMap.autoUpdate = false;
 // renderer.shadowMap.needsUpdate = true;
 
-// Tip 18
-const geometries = [];
+// // Tip 18
+// const geometries = [];
 
-for (let i = 0; i < 50; i++) {
-  const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+// for (let i = 0; i < 50; i++) {
+//   const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
 
-  geometry.rotateX((Math.random() - 0.5) * Math.PI * 2);
-  geometry.rotateY((Math.random() - 0.5) * Math.PI * 2);
+//   geometry.rotateX((Math.random() - 0.5) * Math.PI * 2);
+//   geometry.rotateY((Math.random() - 0.5) * Math.PI * 2);
 
-  geometry.translate(
-    (Math.random() - 0.5) * 10,
-    (Math.random() - 0.5) * 10,
-    (Math.random() - 0.5) * 10
-  );
+//   geometry.translate(
+//     (Math.random() - 0.5) * 10,
+//     (Math.random() - 0.5) * 10,
+//     (Math.random() - 0.5) * 10
+//   );
 
-  geometries.push(geometry);
-}
+//   geometries.push(geometry);
+// }
 
-// console.log(geometries);
+// const mergedGeometries = BufferGeometryUtils.mergeBufferGeometries(geometries);
+// const material = new THREE.MeshNormalMaterial();
+// const mesh = new THREE.Mesh(mergedGeometries, material);
 
-const mergedGeometries = BufferGeometryUtils.mergeBufferGeometries(geometries);
-const material = new THREE.MeshNormalMaterial();
-const mesh = new THREE.Mesh(mergedGeometries, material);
-
-scene.add(mesh);
+// scene.add(mesh);
 
 // // Tip 19
-// for(let i = 0; i < 50; i++)
-// {
-//     const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5)
+// const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+// const material = new THREE.MeshNormalMaterial();
 
-//     const material = new THREE.MeshNormalMaterial()
+// for (let i = 0; i < 50; i++) {
+//   const mesh = new THREE.Mesh(geometry, material);
+//   mesh.position.x = (Math.random() - 0.5) * 10;
+//   mesh.position.y = (Math.random() - 0.5) * 10;
+//   mesh.position.z = (Math.random() - 0.5) * 10;
+//   mesh.rotation.x = (Math.random() - 0.5) * Math.PI * 2;
+//   mesh.rotation.y = (Math.random() - 0.5) * Math.PI * 2;
 
-//     const mesh = new THREE.Mesh(geometry, material)
-//     mesh.position.x = (Math.random() - 0.5) * 10
-//     mesh.position.y = (Math.random() - 0.5) * 10
-//     mesh.position.z = (Math.random() - 0.5) * 10
-//     mesh.rotation.x = (Math.random() - 0.5) * Math.PI * 2
-//     mesh.rotation.y = (Math.random() - 0.5) * Math.PI * 2
-
-//     scene.add(mesh)
+//   scene.add(mesh);
 // }
 
 // // Tip 20
@@ -256,22 +252,41 @@ scene.add(mesh);
 //     scene.add(mesh)
 // }
 
-// // Tip 22
-// const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5)
+// Tip 22
+const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+const material = new THREE.MeshNormalMaterial();
 
-// const material = new THREE.MeshNormalMaterial()
+const mesh = new THREE.InstancedMesh(geometry, material, 50);
+scene.add(mesh);
 
-// for(let i = 0; i < 50; i++)
-// {
-//     const mesh = new THREE.Mesh(geometry, material)
-//     mesh.position.x = (Math.random() - 0.5) * 10
-//     mesh.position.y = (Math.random() - 0.5) * 10
-//     mesh.position.z = (Math.random() - 0.5) * 10
-//     mesh.rotation.x = (Math.random() - 0.5) * Math.PI * 2
-//     mesh.rotation.y = (Math.random() - 0.5) * Math.PI * 2
+for (let i = 0; i < 50; i++) {
+  // const mesh = new THREE.Mesh(geometry, material);
+  // mesh.position.x = (Math.random() - 0.5) * 10;
+  // mesh.position.y = (Math.random() - 0.5) * 10;
+  // mesh.position.z = (Math.random() - 0.5) * 10;
+  // mesh.rotation.x = (Math.random() - 0.5) * Math.PI * 2;
+  // mesh.rotation.y = (Math.random() - 0.5) * Math.PI * 2;
 
-//     scene.add(mesh)
-// }
+  const position = new THREE.Vector3(
+    (Math.random() - 0.5) * 10,
+    (Math.random() - 0.5) * 10,
+    (Math.random() - 0.5) * 10
+  );
+
+  const quaternion = new THREE.Quaternion();
+  quaternion.setFromEuler(
+    new THREE.Euler(
+      (Math.random() - 0.5) * Math.PI * 2,
+      (Math.random() - 0.5) * Math.PI * 2,
+      0
+    )
+  );
+
+  const matrix = new THREE.Matrix4();
+  matrix.makeRotationFromQuaternion(quaternion);
+  matrix.setPosition(position);
+  mesh.setMatrixAt(i, matrix);
+}
 
 // // Tip 29
 // renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
