@@ -178,22 +178,22 @@ tick();
 const cameraHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
 scene.add(cameraHelper);
 
-// // Tip 11
-// cube.castShadow = true
-// cube.receiveShadow = false
+// Tip 11
+cube.castShadow = true;
+cube.receiveShadow = false;
 
-// torusKnot.castShadow = true
-// torusKnot.receiveShadow = false
+torusKnot.castShadow = true;
+torusKnot.receiveShadow = false;
 
-// sphere.castShadow = true
-// sphere.receiveShadow = false
+sphere.castShadow = true;
+sphere.receiveShadow = false;
 
-// floor.castShadow = false
-// floor.receiveShadow = true
+floor.castShadow = false;
+floor.receiveShadow = true;
 
-// // Tip 12
-// renderer.shadowMap.autoUpdate = false
-// renderer.shadowMap.needsUpdate = true
+// Tip 12
+// renderer.shadowMap.autoUpdate = false;
+// renderer.shadowMap.needsUpdate = true;
 
 // // Tip 18
 // for(let i = 0; i < 50; i++)
