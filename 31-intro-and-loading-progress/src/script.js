@@ -7,15 +7,36 @@ import { gsap } from 'gsap';
 /**
  * Loaders
  */
+const loadingBar = document.querySelector('.loading-bar');
 const loadingManager = new THREE.LoadingManager(
   // Loaded
   () => {
-    console.log('loaded');
-    gsap.to(overlayMaterial.uniforms.uAlpha, { duration: 3, value: 0 });
+    // console.log('loaded');
+    gsap.to(overlayMaterial.uniforms.uAlpha, {
+      duration: 3,
+      value: 0,
+      delay: 0.9,
+    });
+    gsap.to(loadingBar, {
+      duration: 1.1,
+      scaleX: 0,
+      autoAlpha: 0,
+      ease: 'sine.out',
+      transformOrigin: 'right center',
+      delay: 0.4,
+    });
   },
   // In progress
-  () => {
-    console.log('in progress...');
+  (itemUrl, itemsLoaded, itemsTotal) => {
+    // console.log('in progress...');
+    const progressRatio = itemsLoaded / itemsTotal;
+
+    gsap.to(loadingBar, {
+      duration: 0.4,
+      scaleX: progressRatio,
+      autoAlpha: progressRatio + 0.2,
+      ease: 'power2.out',
+    });
   }
 );
 const gltfLoader = new GLTFLoader(loadingManager);
