@@ -1,0 +1,96 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  overflow: hidden;
+}
+
+.webgl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  outline: none;
+}
+
+.loading-bar {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  height: 2px;
+  background: #ffffff;
+  transform: scaleX(0.3);
+  transform-origin: top left;
+  transition: transform 0.5s;
+}
+
+.loading-bar.ended {
+  transform: scaleX(0);
+  transform-origin: 100% 0;
+  transition: transform 1.5s ease-in-out;
+}
+
+/* Points of interest */
+.point {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  --point-color: #513bed96;
+}
+
+.point .label {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #00000077;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border: 1px solid #ffffff77;
+  text-align: center;
+  line-height: 40px;
+  font-weight: bold;
+  transition: background-color 0.3s ease-out, transform 0.3s ease-out;
+  will-change: background-color, transform;
+  cursor: help;
+  transform: scale(0);
+}
+
+.point.visible .label {
+  transform: scale(1);
+}
+
+.point .label:hover {
+  background-color: var(--point-color);
+  /* border-color: var(--point-color); */
+}
+
+.point .label:hover + .text {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.point .text {
+  position: absolute;
+  top: 30px;
+  left: calc(-100px - 1em);
+  width: 200px;
+  background-color: #00000084;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.4;
+  font-size: 1rem;
+  padding: 1em 1.4em;
+  border-radius: 4px;
+  box-shadow: -2px 0 0 0 var(--point-color), 2px 0 0 0 var(--point-color);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  will-change: opacity, transition;
+  pointer-events: none;
+}
