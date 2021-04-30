@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { gsap } from 'gsap';
+import * as dat from 'dat.gui';
 
 /**
  * Loaders
@@ -149,8 +150,12 @@ const points = [
     element: document.querySelector('.point-2'),
   },
   {
-    position: new THREE.Vector3(-2, -0.3, 1.8),
+    position: new THREE.Vector3(-2.35, -0.5, -1.05),
     element: document.querySelector('.point-3'),
+  },
+  {
+    position: new THREE.Vector3(-2.215, 1.04, 1.43),
+    element: document.querySelector('.point-4'),
   },
 ];
 
@@ -203,6 +208,30 @@ scene.add(camera);
 // Controls
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
+
+/**
+ * Debug
+ */
+
+const gui = new dat.GUI({ width: 400 });
+gui
+  .add(points[4].position, 'x')
+  .min(-10)
+  .max(10)
+  .step(0.005)
+  .name('Point position x');
+gui
+  .add(points[4].position, 'y')
+  .min(-10)
+  .max(10)
+  .step(0.005)
+  .name('Point position y');
+gui
+  .add(points[4].position, 'z')
+  .min(-10)
+  .max(10)
+  .step(0.005)
+  .name('Point position z');
 
 /**
  * Renderer
